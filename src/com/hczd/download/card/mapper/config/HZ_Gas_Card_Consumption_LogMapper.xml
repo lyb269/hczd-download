@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<!DOCTYPE mapper 
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+<mapper namespace="com.hczd.download.card.mapper.IHZ_Gas_Card_Consumption_LogMapper">
+    <insert id="insert" parameterType="HZ_Gas_Card_Consumption_Log">
+	    insert into HZ_Gas_Card_Consumption_Log(customer_id,customer_name,vehicle_id,vehicle_no,card_no,charge_time,station_id,addr,amount,oil,money_num,current_balance,total,anchor_customer_id,anchor_customer_name,oil_name,import_time)
+	    values(#{customer_id},#{customer_name},#{vehicle_id},#{vehicle_no},#{card_no},#{charge_time},#{station_id},#{addr},#{amount},#{oil},#{money_num},#{current_balance},#{total},#{anchor_customer_id},#{anchor_customer_name},#{oil_name},#{import_time})
+	    <selectKey keyProperty="id" resultType="int" order="AFTER">
+	        select last_value as ID from hz_gas_card_consumption_log_id_seq
+	    </selectKey>
+	</insert>
+	<insert id="insertList" parameterType="java.util.List">
+	    insert into HZ_Gas_Card_Consumption_Log(customer_id,customer_name,vehicle_id,vehicle_no,card_no,charge_time,station_id,addr,amount,oil,money_num,current_balance,total,anchor_customer_id,anchor_customer_name,oil_name,import_time)
+	    values
+	    	<foreach collection="list" item="itm" index="idx" separator=",">
+	    	    (#{itm.customer_id},#{itm.customer_name},#{itm.vehicle_id},#{itm.vehicle_no},#{itm.card_no},#{itm.charge_time},#{itm.station_id},#{itm.addr},#{itm.amount},#{itm.oil},#{itm.money_num},#{itm.current_balance},#{itm.total},#{itm.anchor_customer_id},#{itm.anchor_customer_name},#{itm.oil_name},#{itm.import_time})
+	    	</foreach>
+	    <selectKey keyProperty="id" resultType="int" order="AFTER">
+	        select last_value as ID from hz_gas_card_consumption_log_id_seq
+	    </selectKey>
+	</insert>
+	<update id="update">
+	    update HZ_Gas_Card_Consumption_Log 
+		    set customer_id = #{customer_id},
+		    customer_name = #{customer_name},
+		    vehicle_id = #{vehicle_id},
+		    vehicle_no = #{vehicle_no},
+		    card_no = #{card_no},
+		    charge_time = #{charge_time},
+		    station_id = #{station_id},
+		    addr = #{addr},
+		    amount = #{amount},
+		    oil = #{oil},
+		    money_num = #{money_num},
+		    current_balance = #{current_balance},
+		    total = #{total},
+		    anchor_customer_id = #{anchor_customer_id},
+		    anchor_customer_name = #{anchor_customer_name},
+		    oil_name = #{oil_name},
+		    import_time = #{import_time}
+		    where id = #{id}
+	</update>
+	<update id="updateField" parameterType="map">
+	    update HZ_Gas_Card_Consumption_Log 
+	    ${set_sql}
+	</update>
+	<delete id="delete" parameterType="string">
+	    delete from HZ_Gas_Card_Consumption_Log where id= #{id}
+	</delete>
+	<delete id="deleteRepeat" parameterType="map">
+	    delete from hz_gas_card_consumption_log 
+		where (station_id,card_no,charge_time,amount,oil)
+		in  
+		(select station_id,card_no,charge_time,amount,oil
+		from hz_gas_card_consumption_log
+		group by station_id,card_no,charge_time,amount,oil
+		having count(card_no) > 1)
+		and id not in
+		(select min(id) id from hz_gas_card_consumption_log
+		where (station_id,card_no,charge_time,amount,oil)
+		in
+		(select station_id,card_no,charge_time,amount,oil
+		from hz_gas_card_consumption_log
+		group by station_id,card_no,charge_time,amount,oil
+		having count(card_no) > 1)
+		group by (station_id,card_no,charge_time,amount,oil),customer_id is not null
+		)
+		<if test="start_time != null">and to_timestamp(charge_time,'YYYY-MM-DD HH24:MI:SS')  &gt;= to_timestamp('${start_time}','YYYY-MM-DD HH24:MI:SS')</if>
+		<if test="end_time != null">and to_timestamp(charge_time,'YYYY-MM-DD HH24:MI:SS')  &lt;= to_timestamp('${end_time}','YYYY-MM-DD HH24:MI:SS')</if>
+	</delete>
+	<select id="getScale" parameterType="map" resultType="Object">
+	    select ${column} from HZ_Gas_Card_Consumption_Log 
+	    ${where}
+	    limit 1 offset 0
+	</select>
+	<select id="getScaleList" parameterType="map" resultType="map">
+	    select ${column} from HZ_Gas_Card_Consumption_Log 
+	    ${where}
+	</select>
+	<select id="getLast" parameterType="map" resultType="HZ_Gas_Card_Consumption_Log">
+	    select * from HZ_Gas_Card_Consumption_Log 
+	    ${where}
+	    order by charge_time asc
+	    limit 1 offset 0
+	</select>
+	<select id="select" resultType="HZ_Gas_Card_Consumption_Log">
+	    select * from HZ_Gas_Card_Consumption_Log
+	</select>
+	<select id="selectByParams" resultType="HZ_Gas_Card_Consumption_Log" parameterType="map">
+	    select * from HZ_Gas_Card_Consumption_Log ${where} 
+	</select>
+	<select id="selectByPage" parameterType="HZ_PageData" resultType="HZ_Gas_Card_Consumption_Log">
+	    select * from HZ_Gas_Card_Consumption_Log 
+	    limit ${pageSize} offset ${(currentPage - 1) * pageSize}
+	</select>
+	<select id="selectPageByParams" parameterType="map" resultType="HZ_Gas_Card_Consumption_Log">
+	    select * from HZ_Gas_Card_Consumption_Log ${where} 
+	    limit ${pageData.pageSize} offset ${(pageData.currentPage - 1) * pageData.pageSize}
+	</select>
+	<select id="count" parameterType="map" resultType="int">
+	    select count(id) from HZ_Gas_Card_Consumption_Log ${where}
+	</select>
+	<select id="get" parameterType="string" resultType="HZ_Gas_Card_Consumption_Log">
+	    select * from HZ_Gas_Card_Consumption_Log where id = #{id}
+	</select>
+	<select id="sum" parameterType="map" resultType="double">
+	    select sum(cast(${column} as decimal(50,2))) from HZ_Gas_Card_Consumption_Log 
+	    ${where}
+	</select>
+	
+	
+	<!-- 获取一段时间内的该主卡的所有加油卡消费记录 -->
+	<select id="getListByMainNo" parameterType="map" resultType="HZ_Gas_Card_Consumption_Log">
+	<![CDATA[
+	    select HZ_Gas_Card_Consumption_Log.* from HZ_Gas_Card_Consumption_Log
+	    left join HZ_Gas_Card on HZ_Gas_Card.card_no=HZ_Gas_Card_Consumption_Log.card_no
+	    where HZ_Gas_Card.main_card_no='${main_card_no}' and 
+	    to_timestamp(HZ_Gas_Card_Consumption_Log.charge_time,'YYYY-MM-DD HH24:MI:SS') >= to_timestamp(${startDate},'YYYY-MM-DD HH24:MI:SS')
+		and
+		to_timestamp(HZ_Gas_Card_Consumption_Log.charge_time,'YYYY-MM-DD HH24:MI:SS') <= to_timestamp(${endDate},'YYYY-MM-DD HH24:MI:SS')
+		order by HZ_Gas_Card_Consumption_Log.card_no,charge_time
+		limit ${number} offset ${startNumber}
+		]]>
+	</select>
+	
+	<!-- 获取一段时间内的该主卡的所有加油卡消费记录数量 -->
+	<select id="countListByMainNo" parameterType="map" resultType="int">
+	<![CDATA[
+	    select count(HZ_Gas_Card_Consumption_Log.id) from HZ_Gas_Card_Consumption_Log
+	    left join HZ_Gas_Card on HZ_Gas_Card.card_no=HZ_Gas_Card_Consumption_Log.card_no
+	    where HZ_Gas_Card.main_card_no='${main_card_no}' and 
+	    to_timestamp(HZ_Gas_Card_Consumption_Log.charge_time,'YYYY-MM-DD HH24:MI:SS') >= to_timestamp(${startDate},'YYYY-MM-DD HH24:MI:SS')
+		and
+		to_timestamp(HZ_Gas_Card_Consumption_Log.charge_time,'YYYY-MM-DD HH24:MI:SS') <= to_timestamp(${endDate},'YYYY-MM-DD HH24:MI:SS')
+		]]>
+	</select>				
+	<resultMap type="HZ_Gas_Card_Consumption_Log" id="gas_card_consumption_logResultMap">
+        <result property="id" column="id" />
+        <result property="name" column="username" />
+        <result property="username" column="password" />
+        <result property="password" column="password" />
+        <result property="description" column="description" />
+    </resultMap>
+</mapper>
+
+

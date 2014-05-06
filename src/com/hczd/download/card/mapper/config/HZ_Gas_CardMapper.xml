@@ -1,0 +1,345 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<!DOCTYPE mapper 
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+<mapper namespace="com.hczd.download.card.mapper.IHZ_Gas_CardMapper">
+	<resultMap type="com.hczd.download.card.module.HZ_Gas_Card" id="gas_cardResultMap" autoMapping="true">
+        <result property="id" column="id" />
+        <result property="card_no" column="card_no" />
+        <result property="area" column="area" />
+        <result property="perfer_area" column="perfer_area" />
+        <result property="balance" column="balance" />
+        <result property="vehicle_id" column="vehicle_id" />
+        <result property="vehicle_no" column="vehicle_no" />
+        <result property="customer_id" column="customer_id" />
+        <result property="deadline" column="deadline" />
+        <result property="driver_id" column="driver_id" />
+        <result property="fuel_charge" column="fuel_charge" />
+        <result property="fuel_money" column="fuel_money" />
+        <result property="fuel_number" column="fuel_number" />
+        <result property="main_card_no" column="main_card_no" />
+        <result property="main_card_id" column="main_card_id" />
+        <result property="supplier_id" column="supplier_id" />
+        <result property="status" column="status" />
+        <result property="remark" column="remark" />
+        <result property="password" column="password" />
+        <result property="note_remind" column="note_remind" />
+        <result property="receive_tel" column="receive_tel" />
+        <result property="oid" column="oid" />
+        <result property="haspwd" column="haspwd" />
+        <result property="customer_name" column="customer_name" />
+        <result property="customer_balance" column="customer_balance" />
+    </resultMap>
+
+    <insert id="insert" parameterType="HZ_Gas_Card">
+	    insert into HZ_Gas_Card(card_no,area,balance,vehicle_id,vehicle_no,customer_id,deadline,driver_id,fuel_charge,fuel_money,fuel_number,main_card_no,supplier_id,status,registerdate,remark,password,note_remind,receive_tel,oid,haspwd,customer_name,user_id,user_name,oper_ip,oper_time,params,perfer_area,main_card_id) 
+	    values(#{card_no},#{area},#{balance},#{vehicle_id},#{vehicle_no},#{customer_id},#{deadline},#{driver_id},#{fuel_charge},#{fuel_money},#{fuel_number},#{main_card_no},#{supplier_id},#{status},#{registerdate},#{remark},#{password},#{note_remind},#{receive_tel},#{oid},#{haspwd},#{customer_name},#{user_id},#{user_name},#{oper_ip},#{oper_time},#{params},#{perfer_area},#{main_card_id})
+	    <selectKey keyProperty="id" resultType="int" order="AFTER">
+	        select last_value as ID from hz_gas_card_id_seq
+	    </selectKey>
+	</insert>
+	<update id="update" parameterType="HZ_Gas_Card">
+	    update HZ_Gas_Card 
+	    set card_no = #{card_no},
+	    area = #{area},
+	    balance = #{balance},
+	    vehicle_id = #{vehicle_id},
+	    vehicle_no = #{vehicle_no},
+	    customer_id = #{customer_id},
+	    deadline = #{deadline},
+	    driver_id = #{driver_id},
+	    fuel_charge = #{fuel_charge},
+	    fuel_money = #{fuel_money},
+	    fuel_number = #{fuel_number},
+	    main_card_no = #{main_card_no},
+	    perfer_area = #{perfer_area},
+	    supplier_id = #{supplier_id},
+	    status = #{status},
+	    registerdate = #{registerdate},
+	    remark = #{remark},
+	    password = #{password},
+	    note_remind = #{note_remind},
+	    receive_tel = #{receive_tel},
+	    oid = #{oid},
+	    haspwd = #{haspwd},
+	    customer_name=#{customer_name},
+	    user_id = #{user_id},
+	    user_name = #{user_name},
+	    oper_ip = #{oper_ip},
+	    oper_time = #{oper_time},
+	    params = #{params},
+	    main_card_id = #{main_card_id}
+	    where id = #{id}
+	</update>
+	<update id="updateField" parameterType="map">
+	    update HZ_Gas_Card
+	   ${set_sql}
+	</update>
+	<delete id="delete" parameterType="string">
+	    delete from HZ_Gas_Card where id= #{id}
+	</delete>
+	<select id="getpre_balance" parameterType="map" resultType="string">
+		select current_balance from (
+			select card_no,charge_time as t_time,current_balance 
+			from hz_gas_card_consumption_log 
+			where card_no = '${card_no}'
+				and charge_time &lt;= '${pre_month_last_day}'
+				and customer_id = '${customer_id}'
+			union all
+			select card_no,com_time as t_time,current_balance from hz_gas_card_allocation_record
+				where card_no = '${card_no}'
+				and status = '完成'
+				and com_time &lt;= '${pre_month_last_day}'
+				and customer_id = '${customer_id}'
+			order by t_time desc
+			limit 1 offset 0
+		) as t
+	</select>
+	<!-- 获取客户某月最后一天时间的加油卡余额，参数有客户、月份、加油卡 -->
+	<select id="getMonthLastDayCardBalance" parameterType="map" resultType="map">
+		<![CDATA[
+		select
+		(
+		select sum(cast(app_num as decimal(50,2))) from hz_gas_card_allocation_record
+		where card_no = #{card_no}
+		and customer_id = #{customer_id}
+		and com_time <= '${month_last_day}'
+		and status = '完成'
+		) as total_app_num,
+		(
+		select sum(cast(money_num as decimal(50,2))) from hz_gas_card_consumption_log
+		where card_no = #{card_no}
+		and customer_id = #{customer_id}
+		and charge_time <= '${month_last_day}'
+		)
+		as total_money_num
+		]]>
+	</select>
+	<select id="getMonthLastDayBalance" parameterType="map" resultType="map">
+		<![CDATA[
+			select
+			(
+			select sum(cast(app_num as decimal(50,2))) from hz_gas_card_allocation_record
+			where customer_id = #{customer_id}
+			and com_time <= '${month_last_day}'
+			and status = '完成'
+			) as total_app_num,
+			(
+			select sum(cast(money_num as decimal(50,2))) from hz_gas_card_consumption_log
+			where customer_id = #{customer_id}
+			and charge_time <= '${month_last_day}'
+			)
+			as total_money_num
+			]]>
+	</select>
+	<select id="select" resultType="HZ_Gas_Card">
+	    select 
+<!-- 	    2014-03-11 linhui 获取最新客户名 -->
+	    (select name from hz_customer where id=customer_id) as customer_name,
+	    * from HZ_Gas_Card
+	</select>
+	<select id="getScale" parameterType="map" resultType="Object">
+	    select ${column} from HZ_Gas_Card 
+	    ${where}
+	    limit 1 offset 0
+	</select>
+	<select id="getScaleList" parameterType="map" resultType="map">
+	    select ${column} as rs from HZ_Gas_Card ${where}
+	</select>
+	<select id="getMonthChartCardNoList" parameterType="map" resultType="string">
+	    select card_no from hz_gas_card_history
+		where customer_id = '${customer_id}'
+		and 
+		(
+			start_time &lt;= '${month_first_day}' and end_time &gt;= '${month_last_day}'
+			or start_time &lt;= '${month_last_day}' and start_time &gt;= '${month_first_day}'
+			or end_time &lt;= '${month_last_day}' and end_time &gt;= '${month_first_day}'
+			or start_time &lt;= '${month_first_day}' and end_time is null
+			or start_time &lt;= '${month_first_day}' and end_time=''
+		)
+		union
+		select card_no from hz_gas_card
+		where (registerdate &lt;= '${month_last_day}' or registerdate is null)
+		and customer_id = '${customer_id}'
+		and card_no not in (select card_no from hz_gas_card_history)
+		and (status = 2)
+		union
+		select card_no from hz_gas_card_month_chart where customer_id = '${customer_id}' and month||'-01 00:00:00' = '${month_first_day}'
+		union 
+		select distinct(card_no) as card_no from hz_gas_card_allocation_record
+			where customer_id = '${customer_id}'
+			and com_time like '${month}%'
+			and status = '完成'
+<!-- 		and status = 2 -->
+	</select>
+	<select id="getConsumptionCardNoByMainCard" parameterType="map" resultType="map">
+		select distinct(card_no) as card_no from (
+			select card_no from hz_gas_card 
+			where main_card_no = '${main_card_no}' and card_no not like '%退卡%' and  card_no not like '%挂失%'
+			union all
+			select distinct(card_no) from hz_gas_card_allocation_record where card_no in(
+				select card_no from hz_gas_card_history
+				where 
+					(
+					(end_time &gt;= '${end_time}' and start_time &lt;= '${start_time}')
+					or (end_time &lt;='${end_time}' and end_time &gt;= '${start_time}')
+					or (start_time &lt;= '${end_time}' and start_time &gt;= '${start_time}')
+				)
+				and end_time is not null
+			)
+			and main_card_no = '${main_card_no}'
+		) as t
+	</select>
+	<select id="selectByParams" resultType="HZ_Gas_Card" parameterType="map">
+	    select 
+	    <!-- 	    2014-03-11 linhui 获取最新客户名 -->
+	    (select name from hz_customer where id=customer_id) as customer_name,
+	    * from HZ_Gas_Card ${where} 
+	</select>
+	<select id="selectByPage" parameterType="HZ_PageData" resultType="HZ_Gas_Card">
+	    select 
+	    <!-- 	    2014-03-11 linhui 获取最新客户名 -->
+	    (select name from hz_customer where id=customer_id) as customer_name,
+	    * from HZ_Gas_Card 
+	    limit ${pageSize} offset ${(currentPage - 1) * pageSize}
+	</select>
+	<select id="selectPageByParams" parameterType="map" resultType="HZ_Gas_Card">
+	    select  
+	    <!-- 	    2014-03-11 linhui 获取最新客户名 -->
+	    (select name from hz_customer where id=HZ_Gas_Card.customer_id) as customer_name,
+	    HZ_Gas_Card.*,
+	    		(cast(hz_account_basic.balance as float) - (case when hz_account_basic.freeze_balance is null 
+				then 0 else cast(hz_account_basic.freeze_balance as float) end)) as customer_balance from HZ_Gas_Card
+ 		LEFT JOIN hz_account_basic on hz_account_basic.customer_id=hz_gas_card.customer_id
+	    ${where} 
+	    limit ${pageData.pageSize} offset ${(pageData.currentPage - 1) * pageData.pageSize}
+	</select>
+	<select id="count" parameterType="map" resultType="int">
+	    select count(id) from HZ_Gas_Card ${where}
+	</select>
+	<select id="get" parameterType="string" resultType="HZ_Gas_Card">
+	    select 
+	    	    <!-- 	    2014-03-11 linhui 获取最新客户名 -->
+	    (select name from hz_customer where id=customer_id) as customer_name,
+	    * from HZ_Gas_Card 
+	    where id = #{id}
+	</select>
+	<select id="sum" parameterType="map" resultType="double">
+	    select sum(cast(${column} as float)) from HZ_Gas_Card 
+	    ${where}
+	</select>
+	<!-- 获取加油卡区域 -->
+	<select id="getArea" parameterType="map" resultType="Object">
+		select DISTINCT b.area from hz_gas_card A 
+		LEFT OUTER JOIN hz_main_gas_card B on a.main_card_no = b.card_no ${where}
+	</select>
+	<!-- 获取加油卡明细 -->
+	<select id="getCardDetail" parameterType="map" resultType="HZ_Gas_Card_Consumption_Log">
+
+		SELECT charge_time,addr,type,amount,oil_name,money_num,current_balance from 
+		(
+		SELECT 
+		hz_gas_card_consumption_log.charge_time,
+		hz_gas_card_consumption_log.addr,
+		'消费' as type,
+		hz_gas_card_consumption_log.amount,
+		hz_gas_card_consumption_log.oil_name,
+		hz_gas_card_consumption_log.money_num,
+		hz_gas_card_consumption_log.current_balance
+		from hz_gas_card_consumption_log 
+		where hz_gas_card_consumption_log.card_no='${card_no}'
+		<if test="customer_id!=null">
+			and hz_gas_card_consumption_log.customer_id=${customer_id}
+		</if>
+		
+		UNION ALL
+		
+		SELECT 
+		hz_gas_card_allocation_record.com_time,
+		hz_main_gas_card.supplier_name as addr,
+		'分配' as type,
+		'' as amount,
+		'' as oil_name,
+		hz_gas_card_allocation_record.app_num,
+		hz_gas_card_allocation_record.current_balance
+		FROM hz_gas_card_allocation_record
+		left join hz_main_gas_card on hz_main_gas_card.card_no=hz_gas_card_allocation_record.main_card_no
+		where hz_gas_card_allocation_record.card_no='${card_no}'
+		and hz_gas_card_allocation_record.status='完成'
+		<if test="customer_id!=null">
+			and hz_gas_card_allocation_record.customer_id=${customer_id}
+		</if>
+		
+		) a
+		where 
+		to_timestamp(a.charge_time,'YYYY-MM-DD HH24:MI:SS') &lt;= to_timestamp('${endDate}','YYYY-MM-DD HH24:MI:SS')
+		and
+		to_timestamp(a.charge_time,'YYYY-MM-DD HH24:MI:SS') &gt;= to_timestamp('${startDate}','YYYY-MM-DD HH24:MI:SS')
+		and type like '%${type}%'
+		ORDER BY charge_time ${order}
+		limit ${pageData.pageSize} offset ${(pageData.currentPage - 1) * pageData.pageSize}
+
+	</select>
+	
+		<!-- 获取加油卡明细数量 -->
+	<select id="getCardDetailCount" parameterType="map" resultType="int">
+	<![CDATA[
+		SELECT count(charge_time) from 
+		(
+		SELECT 
+		hz_gas_card_consumption_log.charge_time,
+		hz_gas_card_consumption_log.addr,
+		'消费' as type,
+		hz_gas_card_consumption_log.amount,
+		hz_gas_card_consumption_log.oil_name,
+		hz_gas_card_consumption_log.money_num,
+		hz_gas_card_consumption_log.current_balance
+		from hz_gas_card_consumption_log 
+		where hz_gas_card_consumption_log.card_no='${card_no}'
+		
+		UNION ALL
+		
+		SELECT 
+		hz_gas_card_allocation_record.com_time,
+		'' as addr,
+		'分配' as type,
+		'' as amount,
+		'' as oil_name,
+		hz_gas_card_allocation_record.app_num,
+		hz_gas_card_allocation_record.current_balance
+		FROM hz_gas_card_allocation_record
+		where hz_gas_card_allocation_record.card_no='${card_no}'
+		) a
+		where 
+		to_timestamp(a.charge_time,'YYYY-MM-DD HH24:MI:SS') <= to_timestamp('${endDate}','YYYY-MM-DD HH24:MI:SS')
+		and
+		to_timestamp(a.charge_time,'YYYY-MM-DD HH24:MI:SS') >= to_timestamp('${startDate}','YYYY-MM-DD HH24:MI:SS')
+		and type like '%${type}%'
+		]]>
+	</select>
+	<select id="countCard" parameterType="map" resultType="map">
+		select 
+		* from 
+		(select sum(cast(app_num as decimal(100,2))) as allocation_num from HZ_Gas_Card_Allocation_Record where com_time like '${this_month}%' and status='完成') as t1,
+		(select sum(cast(pay_num as decimal(100,2))) as recharge_num from hz_recharge_record where com_time like '${this_month}%' and status='完成') as t2
+	</select>
+	
+<!-- 	根据客户获取所有加油卡余额 -->
+	<select id="getall_balance" parameterType="map" resultType="string">
+		select current_balance from (
+			select card_no,charge_time as t_time,current_balance 
+			from hz_gas_card_consumption_log 
+			where card_no = '${card_no}'
+				and charge_time &lt;= '${pre_month_last_day}'
+				and customer_id = '${customer_id}'
+			union all
+			select card_no,com_time as t_time,current_balance from hz_gas_card_allocation_record
+				where card_no = '${card_no}'
+				and status = '完成'
+				and com_time &lt;= '${pre_month_last_day}'
+				and customer_id = '${customer_id}'
+			order by t_time desc
+			limit 1 offset 0
+		) as t
+	</select>
+</mapper>

@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<!DOCTYPE mapper 
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+<mapper namespace="com.hczd.download.customer.mapper.IHZ_Customer_Anchored_HistoryMapper">
+    <insert id="insert" parameterType="HZ_Customer_Anchored_History">
+	    insert into HZ_Customer_Anchored_History(top_customer_id,top_customer_name,main_customer_id,main_customer_name,anchor_customer_id,anchor_customer_name,start_time,end_time,status,remark,user_id,user_name,oper_ip,oper_time,params)
+	    values(#{top_customer_id},#{top_customer_name},#{main_customer_id},#{main_customer_name},#{anchor_customer_id},#{anchor_customer_name},#{start_time},#{end_time},#{status},#{remark},#{user_id},#{user_name},#{oper_ip},#{oper_time},#{params})
+	    <selectKey keyProperty="id" resultType="int" order="AFTER">
+	        select last_value as ID from hz_customer_anchored_history_id_seq
+	    </selectKey>
+	</insert>
+	<insert id="insertList" parameterType="java.util.List">
+	    insert into HZ_Customer_Anchored_History(top_customer_id,top_customer_name,main_customer_id,main_customer_name,anchor_customer_id,anchor_customer_name,start_time,end_time,status,remark,user_id,user_name,oper_ip,oper_time,params)
+	    values
+	    	<foreach collection="list" item="itm" index="idx" separator=",">
+	    	    (#{itm.top_customer_id},#{itm.top_customer_name},#{itm.main_customer_id},#{itm.main_customer_name},#{itm.anchor_customer_id},#{itm.anchor_customer_name},#{itm.start_time},#{itm.end_time},#{itm.status},#{itm.remark},#{itm.user_id},#{itm.user_name},#{itm.oper_ip},#{itm.oper_time},#{itm.params})
+	    	</foreach>
+	     <selectKey keyProperty="id" resultType="int" order="AFTER">
+	        select last_value as ID from hz_customer_anchored_history_id_seq
+	    </selectKey>
+	</insert>
+	<update id="update">
+	    update HZ_Customer_Anchored_History 
+		    set top_customer_id = #{top_customer_id},
+		    top_customer_name = #{top_customer_name},
+		    main_customer_id = #{main_customer_id},
+		    main_customer_name = #{main_customer_name},
+		    anchor_customer_id = #{anchor_customer_id},
+		    anchor_customer_name = #{anchor_customer_name},
+		    start_time = #{start_time},
+		    end_time = #{end_time},
+		    status = #{status},
+		    remark = #{remark},
+		    user_id = #{user_id},
+		    user_name = #{user_name},
+		    oper_ip = #{oper_ip},
+		    oper_time = #{oper_time},
+		    params = #{params}
+		    where id = #{id}
+	</update>
+	<update id="updateField" parameterType="map">
+	    update HZ_Customer_Anchored_History 
+	   ${set_sql}
+	</update>
+	<delete id="delete" parameterType="string">
+	    delete from HZ_Customer_Anchored_History where id= #{id}
+	</delete>
+	<select id="getAnchoredByTime" parameterType="map" resultType="HZ_Customer_Anchored_History">
+	    select * from HZ_Customer_Anchored_History
+	    where to_timestamp(start_time,'YYYY-MM-DD HH24:MI:SS') &lt;= to_timestamp(#{time},'YYYY-MM-DD HH24:MI:SS') 
+	    and anchor_customer_id = #{customer_id}
+	    and (to_timestamp(end_time,'YYYY-MM-DD HH24:MI:SS') &gt;= to_timestamp(#{time},'YYYY-MM-DD HH24:MI:SS') or end_time is null)  
+	</select>
+	<select id="getScale" parameterType="map" resultType="Object">
+	    select ${column} from HZ_Customer_Anchored_History 
+	    ${where}
+	</select>
+	<select id="select" resultType="HZ_Customer_Anchored_History">
+	    select * from HZ_Customer_Anchored_History
+	</select>
+	<select id="selectByParams" resultType="HZ_Customer_Anchored_History" parameterType="map">
+	    select * from HZ_Customer_Anchored_History ${where} 
+	</select>
+	<select id="selectByPage" parameterType="HZ_PageData" resultType="HZ_Customer_Anchored_History">
+	    select * from HZ_Customer_Anchored_History 
+	    limit ${pageSize} offset ${(currentPage - 1) * pageSize}
+	</select>
+	<select id="selectPageByParams" parameterType="map" resultType="HZ_Customer_Anchored_History">
+	    select * from HZ_Customer_Anchored_History ${where} 
+	    limit ${pageData.pageSize} offset ${(pageData.currentPage - 1) * pageData.pageSize}
+	</select>
+	<select id="count" parameterType="map" resultType="int">
+	    select count(id) from HZ_Customer_Anchored_History ${where}
+	</select>
+	<select id="get" parameterType="string" resultType="HZ_Customer_Anchored_History">
+	    select * from HZ_Customer_Anchored_History where id = #{id}
+	</select>
+	<resultMap type="HZ_Customer_Anchored_History" id="customer_anchored_historyResultMap">
+        <result property="id" column="id" />
+        <result property="name" column="username" />
+        <result property="username" column="password" />
+        <result property="password" column="password" />
+        <result property="description" column="description" />
+    </resultMap>
+</mapper>
+
+

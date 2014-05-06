@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project-module
+  type="WEB"
+  name="hczd-download"
+  id="myeclipse.1397697577365"
+  context-root="/hczd-download"
+  j2ee-spec="6.0"
+  archive="hczd-download.war">
+  <attributes>
+    <attribute name="webrootdir" value="WebRoot" />
+  </attributes>
+</project-module>
+

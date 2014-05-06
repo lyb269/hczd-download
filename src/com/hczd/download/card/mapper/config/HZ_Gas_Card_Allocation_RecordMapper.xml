@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<!DOCTYPE mapper 
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+<mapper namespace="com.hczd.download.card.mapper.IHZ_Gas_Card_Allocation_RecordMapper">
+    <insert id="insert" parameterType="HZ_Gas_Card_Allocation_Record">
+	    insert into HZ_Gas_Card_Allocation_Record(
+	    	card_no,main_card_no,customer_id,customer_name,
+	    	user_id,user_name,oper_ip,oper_time,params,export,export_time,
+	    	app_time,com_time,supplementary,supplementary_time,
+	    	cardholder,vehicle_no,vehicle_id,status,remark,
+	    	current_balance,app_num,mat_num,source,pay_id
+	    ) values(
+	    	#{card_no},#{main_card_no},#{customer_id},#{customer_name},
+	    	#{user_id},#{user_name},#{oper_ip},#{oper_time},#{params},#{export},#{export_time},
+	    	#{app_time},#{com_time},#{supplementary},#{supplementary_time},
+	    	#{cardholder},#{vehicle_no},#{vehicle_id},#{status},#{remark},
+	    	#{current_balance},#{app_num},#{mat_num},#{source},#{pay_id}
+	    )
+	    <selectKey keyProperty="id" resultType="int" order="AFTER">
+	        select last_value as ID from hz_gas_card_allocation_record_id_seq
+	    </selectKey>
+	</insert>
+	<insert id="insertList" parameterType="java.util.List">
+	     <selectKey keyProperty="id" resultType="int" order="AFTER">
+	        select last_value as ID from hz_gas_card_allocation_record_id_seq
+	    </selectKey>
+	    insert into HZ_Gas_Card_Allocation_Record(card_no,main_card_no,customer_id,customer_name,user_id,user_name,oper_ip,oper_time,params,export,export_time,app_time,com_time,supplementary,supplementary_time,cardholder,vehicle_no,vehicle_id,status,remark,current_balance,app_num,mat_num,source,pay_id)
+	    values
+	    	<foreach collection="list" item="itm" index="idx" separator=",">
+	    	    (#{itm.card_no},#{itm.main_card_no},#{itm.customer_id},#{itm.customer_name},#{itm.user_id},#{itm.user_name},#{itm.oper_ip},#{itm.oper_time},#{itm.params},#{itm.export},#{itm.export_time},#{itm.app_time},#{itm.com_time},#{itm.supplementary},#{itm.supplementary_time},#{itm.cardholder},#{itm.vehicle_no},#{itm.vehicle_id},#{itm.status},#{itm.remark},#{itm.current_balance},#{itm.app_num},#{itm.mat_num},#{itm.source},#{itm.pay_id})
+	    	</foreach>
+	</insert>
+	<update id="update">
+	    update HZ_Gas_Card_Allocation_Record 
+		    set customer_name = #{customer_name},
+		    customer_id = #{customer_id}
+		    user_id= #{user_id},
+		    user_name = #{user_name},
+		    oper_ip = #{oper_ip},
+		    oper_time = #{oper_time},
+		    params = #{params},
+		    app_time = #{app_time},
+		    com_time = #{com_time},
+		    supplementary = #{supplementary},
+		    supplementary_time = #{supplementary_time},
+		    cardholder = #{cardholder},
+		    vehicle_no = #{vehicle_no},
+		    vehicle_id = #{vehicle_id},
+		    status = #{status},
+		    remark = #{remark},
+		    export = #{export},
+		    export_time = #{export_time},
+		    current_balance = #{current_balance},
+		    app_num = #{app_num},
+		    mat_num = #{mat_num},
+		    source = #{source},
+		    card_no = #{card_no},
+		    main_card_no = #{main_card_no},
+		    pay_id = #{pay_id}
+		    where id = #{id}
+	</update>
+	<update id="updateField" parameterType="map">
+	     update HZ_Gas_Card_Allocation_Record 
+		 ${set_sql}
+	</update>
+	<delete id="delete" parameterType="string">
+	    delete from HZ_Gas_Card_Allocation_Record where id= #{id}
+	</delete>
+	<select id="getLastAllocation" parameterType="map" resultType="HZ_Gas_Card_Allocation_Record">
+	    select * from HZ_Gas_Card_Allocation_Record 
+	    where card_no = #{card_no}
+	    order by com_time desc
+	    limit 1 offset 0
+	</select>
+	<select id="getScale" parameterType="map" resultType="Object">
+	    select ${column} from HZ_Gas_Card_Allocation_Record 
+	    ${where}
+	</select>
+	<select id="getScaleList" parameterType="map" resultType="map">
+	    select ${column} as rs from HZ_Gas_Card_Allocation_Record ${where}
+	</select>
+	<select id="select" resultType="HZ_Gas_Card_Allocation_Record">
+	    select * from HZ_Gas_Card_Allocation_Record
+	</select>
+	<select id="selectByParams" resultType="HZ_Gas_Card_Allocation_Record" parameterType="map">
+	    select * from HZ_Gas_Card_Allocation_Record ${where} 
+	</select>
+	<select id="selectByPage" parameterType="HZ_PageData" resultType="HZ_Gas_Card_Allocation_Record">
+	    select * from HZ_Gas_Card_Allocation_Record 
+	    limit ${pageSize} offset ${(currentPage - 1) * pageSize}
+	</select>
+	<select id="selectPageByParams" parameterType="map" resultType="HZ_Gas_Card_Allocation_Record">
+	    select * from HZ_Gas_Card_Allocation_Record ${where} 
+	    limit ${pageData.pageSize} offset ${(pageData.currentPage - 1) * pageData.pageSize}
+	</select>
+	<select id="count" parameterType="map" resultType="int">
+	    select count(id) from HZ_Gas_Card_Allocation_Record ${where}
+	</select>
+	<select id="get" parameterType="string" resultType="HZ_Gas_Card_Allocation_Record">
+	    select * from HZ_Gas_Card_Allocation_Record where id = #{id}
+	</select>
+	<select id="sum" parameterType="map" resultType="double">
+	    select sum(cast(${column} as float)) from HZ_Gas_Card_Allocation_Record 
+	    ${where}
+	</select>
+	
+	<!-- 获取一段时间内的该主卡的所有加油卡消费记录 -->
+	<select id="getListByMainNo" parameterType="map" resultType="HZ_Gas_Card_Allocation_Record">
+	<![CDATA[
+	    select HZ_Gas_Card_Allocation_Record.* from HZ_Gas_Card_Allocation_Record
+	    left join HZ_Gas_Card on HZ_Gas_Card.card_no=HZ_Gas_Card_Allocation_Record.card_no
+	    where HZ_Gas_Card.main_card_no='${main_card_no}' and 
+	    to_timestamp(HZ_Gas_Card_Allocation_Record.com_time,'YYYY-MM-DD HH24:MI:SS') >= to_timestamp(${startDate},'YYYY-MM-DD HH24:MI:SS')
+		and
+		to_timestamp(HZ_Gas_Card_Allocation_Record.com_time,'YYYY-MM-DD HH24:MI:SS') <= to_timestamp(${endDate},'YYYY-MM-DD HH24:MI:SS')
+		order by HZ_Gas_Card_Allocation_Record.card_no,com_time
+		limit ${number} offset ${startNumber}
+		]]>
+	</select>
+	
+	<!-- 获取一段时间内的该主卡的所有加油卡消费记录数量 -->
+	<select id="countListByMainNo" parameterType="map" resultType="int">
+	<![CDATA[
+	    select count(HZ_Gas_Card_Allocation_Record.id) from HZ_Gas_Card_Allocation_Record
+	    left join HZ_Gas_Card on HZ_Gas_Card.card_no=HZ_Gas_Card_Allocation_Record.card_no
+	    where HZ_Gas_Card.main_card_no='${main_card_no}' and 
+	    to_timestamp(HZ_Gas_Card_Allocation_Record.com_time,'YYYY-MM-DD HH24:MI:SS') >= to_timestamp(${startDate},'YYYY-MM-DD HH24:MI:SS')
+		and
+		to_timestamp(HZ_Gas_Card_Allocation_Record.com_time,'YYYY-MM-DD HH24:MI:SS') <= to_timestamp(${endDate},'YYYY-MM-DD HH24:MI:SS')
+		]]>
+	</select>
+	<!-- 统计前台客户 -->
+	<select id="countClientApp" resultType="int">
+		select count(id) from hz_gas_card_allocation_record
+		where source like '%批量分配(客户端)%'
+		and status = '申请中'
+	</select>
+	<resultMap type="HZ_Gas_Card_Allocation_Record" id="gas_card_allocation_recordResultMap">
+        <result property="id" column="id" />
+        <result property="name" column="username" />
+        <result property="username" column="password" />
+        <result property="password" column="password" />
+        <result property="description" column="description" />
+    </resultMap>
+</mapper>
+
+
