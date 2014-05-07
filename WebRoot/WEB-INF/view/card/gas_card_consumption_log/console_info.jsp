@@ -3,11 +3,17 @@
 String path = request.getContextPath();
 String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path+"/";
 %>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 	<head>
-		<title>${cardNo}消费数据下载实时</title>
-		<script type="text/javascript" src="js/hczd-sys.js"></script>
+	<base href="<%=basePath%>">
+    
+    <title>${cardNo}实时控制台</title>
+    
+	<meta http-equiv="pragma" content="no-cache">
+	<meta http-equiv="cache-control" content="no-cache">
+	<meta http-equiv="expires" content="0">    
+	<link type="image/vnd.microsoft.icon" rel="shortcut icon" href="images/favicon.ico">
+	<script type="text/javascript" src="js/hczd-sys.js"></script>
 		<script type="text/javascript">
 			$(function(){
 				//定时刷新控制台信息
@@ -15,20 +21,19 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 			});
 		//控制台输出数据
 			function console_info(){
-				alert(1);
 				$.ajax({
-					url:'<%=basePath%>/hczd-download/card/gas_card_consumption_log/ajax_msg_console.htm',
+					url:'<%=basePath%>card/gas_card_consumption_log/ajax_msg_console.htm',
 					data:"cardNo="+$("#cardNo").val(),
 					success:function(data){
-						alert(data.show_msg);
 						$("#console_show").html(data.show_msg);
 					}
 				});
 			}
 		</script>
+		
 	</head>
 	<body>
 	  	<input type="hidden" value="${ cardNo}" id="cardNo" />
 	  	<div style="OVERFLOW-Y: auto;background-color: black;color: white;height:100%;padding:0;" id="console_show"></div>
-  	</body>
+	</body>
 </html>

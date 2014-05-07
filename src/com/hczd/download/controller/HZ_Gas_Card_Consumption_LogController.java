@@ -155,6 +155,7 @@ public class HZ_Gas_Card_Consumption_LogController {
 	 */
 	@RequestMapping(value="downloadCache.htm")
 	public void downloadCache(HttpServletRequest httpServletRequest, HttpServletResponse response ,@RequestParam String name){
+		
 		String root = httpServletRequest.getServletContext().getRealPath("/") + "card_data/"+name;
 		File file = new File(root);
 		String filename = file.getName();

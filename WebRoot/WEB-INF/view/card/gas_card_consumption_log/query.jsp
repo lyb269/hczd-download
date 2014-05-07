@@ -49,8 +49,21 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 					handler: function(){
 						if($('#dg').datagrid('getSelected')){
 							var obj = $('#dg').datagrid('getSelected');
-							hczd_sys.window.edit('实时控制台','card/gas_card_consumption_log/console_info.htm?cardNo='+obj.card_no,600,600); 
-							/* window.open("card/gas_card_consumption_log/console_info.htm?cardNo="+obj.card_no,'','width=200,height=100') ;  */
+						/* 	hczd_sys.window.edit(obj.card_no+'实时控制台','card/gas_card_consumption_log/console_info.htm?cardNo='+obj.card_no,600,600);  */
+							/* var title = obj.card_no+'实时控制台';
+							var url = 'card/gas_card_consumption_log/console_info.htm?cardNo='+obj.card_no; 
+							var width = 600; 
+							var height = 400; 
+							var id = obj.card_no;
+							$('body').append('<div id="' + id +'" data-options="iconCls:' + "'icon-edit'" +'"></div>');
+							$('#' + id).window({
+								title:title,
+							    width:width,  
+							    height:height, 
+							    href:url,
+							    modal:false
+							}); */
+						window.open('card/gas_card_consumption_log/console_info.htm?cardNo='+obj.card_no,'newwindow'+obj.card_no,'height=500,width=700,top=0,left=0,toolbar=no,menubar=no,scrollbars=no,resizable=no,location=no,status=no');
 						}else{
 							$.messager.alert('提示','请选择一项进行操作！');
 						}
@@ -75,11 +88,13 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 			        	if(value == 0){
 			        		return '<span style="color:green;">正常</span>';
 			        	}else if(value==1){	
-			        		return '<span style="color:red;">下载中..</span>';
+			        		return '<span style="color:blue;">下载中..</span>';
 			        	}else if(value==2){
-			        		return '<span style="color:red;">合并文件中..</span>';
+			        		return '<span style="color:blue;">合并文件中..</span>';
 			        	}else if(value==3){
-			        		return '<span style="color:red;">去除重复数据中..</span>';
+			        		return '<span style="color:blue;">去除重复数据中..</span>';
+			        	}else if(value==4){
+			        		return '<span style="color:red;">下载失败</span>';
 			        	}
 			         }}
 			    ]]  

@@ -9,16 +9,44 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
     			var endDate = $('#date_end').datebox('getValue');
     			var cardNo = $('#mainCard').val();
     			var pwd =    $('#card_password').val();
-    			$.ajax({
-    			  type:'POST',
-				  url: '<%=basePath%>card/gas_card_consumption_log/startDownload.htm',
-				  data:'startDate='+startDate+'&endDate='+endDate+'&cardNo='+cardNo+'&pwd='+pwd,
-				  success: function(data){
-				  	
-				  }
-				});
-				$('#hczd_sys_win_edit').window('close');
+    			if(startDate == "" || startDate == null){
+    				alert("开始日期不能为空");
+    			}else if(endDate == "" || endDate == null){
+    				alert("结束日期不能为空");
+    			}else if(pwd == "" || pwd == null){
+    				alert("密码不能为空");
+    			}else{
+    				$.ajax({
+	    			  type:'POST',
+					  url: '<%=basePath%>card/gas_card_consumption_log/startDownload.htm',
+					  data:'startDate='+startDate+'&endDate='+endDate+'&cardNo='+cardNo+'&pwd='+pwd,
+					  success: function(data){
+					  }
+					});
+					$('#hczd_sys_win_edit').window('close');
+    			}
+    			
     		}
+    		
+    		/* 日期字段判断 */
+    		$('#date_start').datebox({    
+   				onSelect: function(date){
+ 					 if(date >= new Date()){
+				 	 	alert("开始日期必须小于今天");
+				 	 	$('#date_start').datebox('setValue', "");	
+				 	 }
+    			}
+			}); 
+			$('#date_end').datebox({    
+   				onSelect: function(date){
+   					var endDate = $('#date_end').datebox('getValue');
+   					var startDate = $('#date_start').datebox('getValue');
+ 					 if(endDate < startDate){
+				 	 	alert("结束日期必须大于等于开始日期");
+				 	 	$('#date_end').datebox('setValue', "");	
+				 	 }
+    			}
+			}); 
    		  </script>
    <table>
   		<tr>

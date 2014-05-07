@@ -64,11 +64,8 @@ public class HZ_Sinopec_Util{
 	public static final int RUNNING = 1; //下载中
 	public static final int MERGE = 2; //合并文件中
 	public static final int DELETE_REPEAT = 3; //去除重复数据中
+	public static final int FAIL = 4; //去除重复数据中
 	
-	/**
-	 * @author xiaojin
-	 * @create_date 2014-5-4下午2:28:04
-	 */
 	
 	@Autowired
 	private IHZ_Gas_CardService hz_gas_cardService;
@@ -111,62 +108,73 @@ public class HZ_Sinopec_Util{
 	
 	public void main(String mainCard,String pwd,String startDate,String endDate,String root) throws IOException{
 		StringBuffer sb = new StringBuffer();
-		Integer state = mainCardState.get(mainCard);
-		if(state==null){
-			state=NORMAL;
-		}
-		put_msg(mainCard ,"检测主卡运行状态",sb);
-		if(state == NORMAL){
-		synchronized (mainCard) {
-				mainCardState.put(mainCard,RUNNING);
-				
-				put_msg(mainCard ,"创建远程请求",sb);
-				HZ_HttpClient httpClient = new HZ_HttpClient("http://www.saclub.com.cn/");
-				put_msg(mainCard ,"获取验证码图片",sb);
-				
-				getImage(httpClient);
-				
-				put_msg(mainCard ,"自动登录中",sb);
-				login(httpClient,mainCard,pwd,sb);
-				
-				put_msg(mainCard ,"获取中石化客户编号",sb);
-				String customerId = getCustomerId(httpClient);
-				
-				put_msg(mainCard ,"获取子卡信息",sb);
-				List<Object> list_cardNo = hz_gas_cardService.getConsumptionCardNoByMainCard(mainCard, startDate + " 00:00:00", endDate + " 23:59:59");
-				
-				File dir =new File(root);
-				if(!dir.exists()){
-					dir.mkdir();
-				}
-				File cardDir = new File(root + mainCard + "/");
-				if(!cardDir.exists()){
-					cardDir.mkdir();
-				}
-				
-				put_msg(mainCard ,"开始下载消费数据",sb);
-				Cookie[] cookies = httpClient.getCookie();
-				for (int i = 0; i < list_cardNo.size(); i++) {
-					File file =new File(root + mainCard + "/"+ list_cardNo.get(i).toString() +".xls");
-					file.createNewFile();
-					HZ_HttpClient tempHttpClient = new HZ_HttpClient("http://www.saclub.com.cn/",cookies);
-					getConsumptionExcel(mainCard ,tempHttpClient, file,customerId, list_cardNo.get(i).toString(), startDate, endDate,sb);
-				}
-				
-				put_msg(mainCard ,"所有文件下载完成",sb);
-				
-				put_msg(mainCard ,"开始合并文件...",sb);
-				mainCardState.put(mainCard,MERGE);
-				mergerExcelFile(mainCard,list_cardNo, root + mainCard,sb);
-				put_msg(mainCard ,"合并完成",sb);
-				
-				put_msg(mainCard ,"开始保存数据...",sb);
-				uploadConsumption(root, mainCard, startDate, endDate,sb); 
-				put_msg(mainCard ,"保存成功",sb);
-				mainCardState.put(mainCard, NORMAL);
-		}
-		}else if(state == RUNNING){
-			put_err("当前主卡正在进行下载...");
+		try {
+			Integer state = mainCardState.get(mainCard);
+			if(state==null){
+				state=NORMAL;
+			}
+			put_msg(mainCard ,"检测主卡运行状态",sb);
+			if(state == FAIL){
+				put_msg(mainCard ,"当前主卡上一次下载出错...",sb);
+				state = NORMAL;
+			}
+			if(state == NORMAL){
+			synchronized (mainCard) {
+					mainCardState.put(mainCard,RUNNING);
+					
+					put_msg(mainCard ,"创建远程请求",sb);
+					HZ_HttpClient httpClient = new HZ_HttpClient("http://www.saclub.com.cn/");
+					put_msg(mainCard ,"获取验证码图片",sb);
+					
+					getImage(httpClient);
+					
+					put_msg(mainCard ,"自动登录中",sb);
+					login(httpClient,mainCard,pwd,sb);
+					
+					put_msg(mainCard ,"获取中石化客户编号",sb);
+					String customerId = getCustomerId(httpClient);
+					
+					put_msg(mainCard ,"获取子卡信息",sb);
+					List<Object> list_cardNo = hz_gas_cardService.getConsumptionCardNoByMainCard(mainCard, startDate + " 00:00:00", endDate + " 23:59:59");
+					
+					File dir =new File(root);
+					if(!dir.exists()){
+						dir.mkdir();
+					}
+					File cardDir = new File(root + mainCard + "/");
+					if(!cardDir.exists()){
+						cardDir.mkdir();
+					}
+					
+					put_msg(mainCard ,"开始下载消费数据",sb);
+					Cookie[] cookies = httpClient.getCookie();
+					for (int i = 0; i < list_cardNo.size(); i++) {
+						File file =new File(root + mainCard + "/"+ list_cardNo.get(i).toString() +".xls");
+						file.createNewFile();
+						HZ_HttpClient tempHttpClient = new HZ_HttpClient("http://www.saclub.com.cn/",cookies);
+						getConsumptionExcel(mainCard ,tempHttpClient, file,customerId, list_cardNo.get(i).toString(), startDate, endDate,sb);
+					}
+					
+					put_msg(mainCard ,"所有文件下载完成",sb);
+					
+					put_msg(mainCard ,"开始合并文件...",sb);
+					mainCardState.put(mainCard,MERGE);
+					mergerExcelFile(mainCard,list_cardNo, root + mainCard,sb);
+					put_msg(mainCard ,"合并完成",sb);
+					
+					put_msg(mainCard ,"开始保存数据...",sb);
+					uploadConsumption(root, mainCard, startDate, endDate,sb); 
+					put_msg(mainCard ,"保存成功",sb);
+					mainCardState.put(mainCard, NORMAL);
+			}
+			}else if(state == RUNNING){
+				put_msg(mainCard,"当前主卡正在进行下载...",sb);
+				mainCardState.put(mainCard, RUNNING);
+			}
+		} catch (Exception e) {
+			put_msg(mainCard,"当前主卡下载出错...",sb);
+			mainCardState.put(mainCard, FAIL);
+			delete(new File(root+"/"+mainCard));
 		}
 	}
 	
@@ -680,9 +688,21 @@ public class HZ_Sinopec_Util{
 				put_msg(userName,"登录失败",sb);
 			}
 		}
-
 	}
-	
+	/**
+	 * 删除下载失败文件
+	 * @author linyb
+	 * @create_date 2014-5-7下午1:40:35
+	 */
+	private void delete(File file){
+		if(file.isDirectory()){
+			File[] fs = file.listFiles();
+			for (File f : fs) {
+				delete(f);
+			}
+		}
+		file.delete();
+	}
 }
 
 
