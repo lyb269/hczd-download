@@ -33,8 +33,15 @@ public class HZ_Main_Gas_Card extends HZ_BaseRecordObject {
 	private String  cardholder;			// 持卡人
 	
 	private Integer state = 0 ; //主卡消费数据下载状态(不保存数据库)
+	private String dateStr ; //主卡当前正在下载的时间范围(不保存数据库)
 	
 	
+	public String getDateStr() {
+		return dateStr;
+	}
+	public void setDateStr(String dateStr) {
+		this.dateStr = dateStr;
+	}
 	public Integer getState() {
 		return state;
 	}
@@ -131,4 +138,10 @@ public class HZ_Main_Gas_Card extends HZ_BaseRecordObject {
 	public void setCardholder(String cardholder) {
 		this.cardholder = cardholder;
 	}
+	@Override
+	public String toString() {
+		return "HZ_Main_Gas_Card [card_no=" + card_no + ", state=" + state
+				+ ", dateStr=" + dateStr + "]";
+	}
+	
 }

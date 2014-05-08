@@ -7,6 +7,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.hczd.download.base.module.HZ_PageData;
+import com.hczd.download.card.module.HZ_Gas_Card_Cache_Excel;
 import com.hczd.download.card.module.HZ_Main_Gas_Card;
 import com.hczd.download.card.service.IHZ_Main_Gas_CardService;
 import com.hczd.download.card.util.HZ_Sinopec_Util;
@@ -63,12 +66,14 @@ public class HZ_Gas_Card_Consumption_LogController {
 		
 		List<HZ_Main_Gas_Card> main_cards = hz_main_gas_cardService.listPageByParams(sys_params, pageData);
 		//下载状态监听
-		for (int i = 0; i < main_cards.size(); i++) {
+		for (int i = main_cards.size()-1; i>=0; i--) {
 			HZ_Main_Gas_Card main_card = main_cards.get(i);
 			if(main_card.getCard_no().matches("^9[0-9]+$")){
 				main_cards.remove(i);
+			}else{
+				main_card.setDateStr(sinopec_Util.getDownLoadDate(main_card.getCard_no()));
+				main_card.setState(sinopec_Util.getMainCardState(main_card.getCard_no()));
 			}
-			main_card.setState(sinopec_Util.getMainCardState(main_card.getCard_no()));
 		}
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("rows", main_cards);
@@ -139,10 +144,21 @@ public class HZ_Gas_Card_Consumption_LogController {
 		String root = httpServletRequest.getServletContext().getRealPath("/") + "card_data/";
 		File file = new File(root);
 		File[] files = file.listFiles();
-		/*for (File f : files) {
-			System.out.println(f.getName() + "----" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(f.lastModified())));
-		}*/
-		model.put("files", files);
+		List<File> fs = new ArrayList<File>();
+		List<HZ_Gas_Card_Cache_Excel> caches = new ArrayList<HZ_Gas_Card_Cache_Excel>();
+		//过滤掉 正在下载的，或者下载失败的，文件夹
+		for (int i = 0; i < files.length; i++) {
+			HZ_Gas_Card_Cache_Excel cache = new HZ_Gas_Card_Cache_Excel();
+			File f = files[i];
+			if(f.isFile()){
+				cache.setF(f);
+				String[] card_no = f.getName().split("\\.");
+				String mainCard = card_no[0];
+				cache.setDate_msg(sinopec_Util.getDateMsg().get(mainCard));
+				caches.add(cache);
+			}
+		}
+		model.put("files", caches);
 		return "/card/gas_card_consumption_log/list_cache_main_card_excel";
 	}
 	/**

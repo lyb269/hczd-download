@@ -38,7 +38,11 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 					handler: function(){
 						if($('#dg').datagrid('getSelected')){
 							var obj = $('#dg').datagrid('getSelected');
-							hczd_sys.window.edit('选择下载条件','card/gas_card_consumption_log/toDownload.htm?id='+obj.id,600,200);
+							if(obj.state==0 || obj.state ==4){
+								hczd_sys.window.edit('选择下载条件','card/gas_card_consumption_log/toDownload.htm?id='+obj.id,600,200);
+							}else{
+								$.messager.alert('提示','当前项已经在下载中..');
+							}
 						}else{
 							$.messager.alert('提示','请选择一项进行操作！');
 						}
@@ -72,7 +76,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 			    	text:'下载缓存数据',
 					iconCls: 'icon-ok',
 					handler: function(){
-						hczd_sys.window.edit('下载缓存数据','card/gas_card_consumption_log/list_cache_main_card_excel.htm',600,400);
+						hczd_sys.window.edit('下载缓存数据','card/gas_card_consumption_log/list_cache_main_card_excel.htm',700,400);
 					}
 				},'-',{
 					text:'帮助',
@@ -96,7 +100,8 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 			        	}else if(value==4){
 			        		return '<span style="color:red;">下载失败</span>';
 			        	}
-			         }}
+			         }},
+			        {field:'dateStr',title:'',width:150}
 			    ]]  
 			});
 			

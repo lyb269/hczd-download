@@ -24,6 +24,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 					  }
 					});
 					$('#hczd_sys_win_edit').window('close');
+					$('#dg').datagrid('reload');
     			}
     			
     		}
