@@ -60,8 +60,12 @@
 	<classpathentry kind="lib" path="lib/json/gson-2.2.2.jar"/>
 	<classpathentry kind="lib" path="lib/json/json-lib-2.4-jdk15.jar"/>
 	<classpathentry kind="lib" path="lib/junit/junit-4.10.jar"/>
-	<classpathentry kind="lib" path="lib/excel/poi-3.7.jar"/>
-	<classpathentry kind="lib" path="lib/excel/poi-ooxml-3.7.jar"/>
-	<classpathentry kind="lib" path="lib/excel/poi-ooxml-schemas-3.7.jar"/>
+	<classpathentry kind="lib" path="lib/other/jsoup-1.7.3.jar"/>
+	<classpathentry kind="lib" path="lib/excel/jxl.jar"/>
+	<classpathentry kind="lib" path="lib/excel/poi-3.10-FINAL-20140208.jar"/>
+	<classpathentry kind="lib" path="lib/excel/poi-ooxml-3.10-FINAL-20140208.jar"/>
+	<classpathentry kind="lib" path="lib/excel/poi-ooxml-schemas-3.10-FINAL-20140208.jar"/>
+	<classpathentry kind="lib" path="lib/excel/xmlbeans-2.3.0.jar"/>
+	<classpathentry kind="lib" path="lib/common/jaxen-1.1-beta-6.jar"/>
 	<classpathentry kind="output" path="WebRoot/WEB-INF/classes"/>
 </classpath>

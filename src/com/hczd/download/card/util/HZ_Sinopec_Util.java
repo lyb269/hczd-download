@@ -183,11 +183,11 @@ public class HZ_Sinopec_Util{
 	}
 	
 	private void put_msg(String cardNo,String msg ,StringBuffer sb) {
-		sb.append(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date())+":  "+msg+"<br/>");
+		sb.insert(0, new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date())+":  "+msg+"<br/>");
 		console_msg.put(cardNo, sb);
 	}
 	private void put_err(String cardNo,String msg,StringBuffer sb) {
-		sb.append("<span style='color:red;'>"+new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date())+":  "+msg+"</span><br/>");
+		sb.insert(0,"<span style='color:red;'>"+new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date())+":  "+msg+"</span><br/>");
 		console_msg.put(cardNo, sb);
 	}
 	/**
@@ -547,7 +547,7 @@ public class HZ_Sinopec_Util{
 		fileOutputStream.flush();
 		fileOutputStream.close();
 		
-		put_msg(mainCard ,"成功：加油卡"+cardId+"消费时间下载已完成！",sb);
+		put_msg(mainCard ,"成功：加油卡"+cardId+"消费数据下载已完成！",sb);
 		
 		
 		/*Workbook wb=null;

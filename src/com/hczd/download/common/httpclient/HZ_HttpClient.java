@@ -29,6 +29,10 @@ public class HZ_HttpClient {
 	
 	private HttpClient httpClient;
 	
+	public HttpClient getHttpClient() {
+		return httpClient;
+	}
+	
 	/**
 	 * @throws NullPointerException 
 	 * @throws URIException 
@@ -100,6 +104,7 @@ public class HZ_HttpClient {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	
 		return method.getResponseBody();
 	}
 

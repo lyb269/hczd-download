@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<!DOCTYPE mapper 
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+<mapper namespace="com.hczd.download.access.mapper.IHZ_Access_Card_Allocation_RecordMapper">
+    <insert id="insert" parameterType="HZ_Access_Card_Allocation_Record">
+	    insert into HZ_Access_Card_Allocation_Record(
+			app_num, mat_num, current_balance, source, status, supplementary, supplementary_time,
+			app_time, com_time, remark, export, export_time, vehicle_no, vehicle_id, card_id, card_no,
+			main_name, main_card_id, customer_name, customer_id, pay_id,
+			user_id, user_name, oper_ip, oper_time, params
+	    ) values(
+			#{app_num},#{mat_num},#{current_balance},#{source},#{status},#{supplementary},#{supplementary_time},
+			#{app_time},#{com_time},#{remark},#{export},#{export_time},#{vehicle_no},#{vehicle_id},#{card_id},#{card_no},
+			#{main_name},#{main_card_id},#{customer_name},#{customer_id},#{pay_id},
+	    	#{user_id},#{user_name},#{oper_ip},#{oper_time},#{params}
+	    )
+	    <selectKey keyProperty="id" resultType="int" order="AFTER">
+	        select last_value as ID from HZ_Access_Card_Allocation_Record_id_seq
+	    </selectKey>
+	</insert>
+	<insert id="insertList" parameterType="java.util.List">
+	     <selectKey keyProperty="id" resultType="int" order="AFTER">
+	        select last_value as ID from HZ_Access_Card_Allocation_Record_id_seq
+	    </selectKey>
+	    insert into HZ_Access_Card_Allocation_Record(
+	    	app_num, mat_num, current_balance, source, status, supplementary, supplementary_time,
+			app_time, com_time, remark, export, export_time, vehicle_no, vehicle_id, card_id, card_no,
+			main_name, main_card_id, customer_name, customer_id, pay_id,
+			user_id, user_name, oper_ip, oper_time, params
+	    ) values
+	    	<foreach collection="list" item="itm" index="idx" separator=",">
+	    	    (
+	    	    	#{itm.app_num},#{itm.mat_num},#{itm.current_balance},#{itm.source},#{itm.status},#{itm.supplementary},#{itm.supplementary_time},
+					#{itm.app_time},#{itm.com_time},#{itm.remark},#{itm.export},#{itm.export_time},#{itm.vehicle_no},#{itm.vehicle_id},#{itm.card_id},#{itm.card_no},
+					#{itm.main_name},#{itm.main_card_id},#{itm.customer_name},#{itm.customer_id},#{itm.pay_id},
+			    	#{itm.user_id},#{itm.user_name},#{itm.oper_ip},#{itm.oper_time},#{itm.params}
+	    	    )
+	    	</foreach>
+	</insert>
+	<update id="updateField" parameterType="map">
+	     update HZ_Access_Card_Allocation_Record 
+		    ${set_sql}
+	</update>
+	<select id="getScale" parameterType="map" resultType="Object">
+	    select ${column} from HZ_Access_Card_Allocation_Record 
+	    ${where}
+	    limit 1 offset 0
+	</select>
+	<delete id="delete" parameterType="string">
+	    delete from HZ_Access_Card_Allocation_Record where id= #{id}
+	</delete>
+	<select id="select" resultType="HZ_Access_Card_Allocation_Record">
+	    select * from HZ_Access_Card_Allocation_Record
+	</select>
+	<select id="selectByParams" resultType="HZ_Access_Card_Allocation_Record" parameterType="map">
+	    select * from HZ_Access_Card_Allocation_Record ${where} 
+	</select>
+	<select id="selectByPage" parameterType="HZ_PageData" resultType="HZ_Access_Card_Allocation_Record">
+	    select * from HZ_Access_Card_Allocation_Record 
+	    limit ${pageSize} offset ${(currentPage - 1) * pageSize}
+	</select>
+	<select id="selectPageByParams" parameterType="map" resultType="HZ_Access_Card_Allocation_Record">
+	    select * from HZ_Access_Card_Allocation_Record ${where} 
+	    limit ${pageData.pageSize} offset ${(pageData.currentPage - 1) * pageData.pageSize}
+	</select>
+	<select id="count" parameterType="map" resultType="int">
+	    select count(id) from HZ_Access_Card_Allocation_Record ${where}
+	</select>
+	<select id="get" parameterType="string" resultType="HZ_Access_Card_Allocation_Record">
+	    select * from HZ_Access_Card_Allocation_Record where id = #{id}
+	</select>
+	<select id="sum" parameterType="map" resultType="double">
+	    select sum(cast(${column} as float)) from HZ_Access_Card_Allocation_Record 
+	    ${where}
+	</select>
+	<!-- 获取一段时间内的该主卡的所有卡消费记录数量 -->
+	<select id="countListByMainNo" parameterType="map" resultType="int"> 
+	<![CDATA[
+	    select count(HZ_Access_Card_Allocation_Record.id) from HZ_Access_Card_Allocation_Record
+	    left join HZ_Access_Card on HZ_Access_Card.id=HZ_Access_Card_Allocation_Record.card_id
+	    where HZ_Access_Card.main_card_id='${main_id}' and 
+	    to_timestamp(HZ_Access_Card_Allocation_Record.com_time,'YYYY-MM-DD HH24:MI:SS') >= to_timestamp(${startDate},'YYYY-MM-DD HH24:MI:SS')
+		and
+		to_timestamp(HZ_Access_Card_Allocation_Record.com_time,'YYYY-MM-DD HH24:MI:SS') <= to_timestamp(${endDate},'YYYY-MM-DD HH24:MI:SS')
+		]]>
+	</select>
+	<!-- 获取一段时间内的该主卡的所有加油卡消费记录 -->
+	<select id="getListByMainNo" parameterType="map" resultType="HZ_Access_Card_Allocation_Record">
+	<![CDATA[
+	    select HZ_Access_Card_Allocation_Record.* from HZ_Access_Card_Allocation_Record
+	    left join HZ_Access_Card on HZ_Access_Card.id=HZ_Access_Card_Allocation_Record.card_id
+	    where HZ_Access_Card.main_card_id='${main_id}' and 
+	    to_timestamp(HZ_Access_Card_Allocation_Record.com_time,'YYYY-MM-DD HH24:MI:SS') >= to_timestamp(${startDate},'YYYY-MM-DD HH24:MI:SS')
+		and
+		to_timestamp(HZ_Access_Card_Allocation_Record.com_time,'YYYY-MM-DD HH24:MI:SS') <= to_timestamp(${endDate},'YYYY-MM-DD HH24:MI:SS')
+		order by HZ_Access_Card_Allocation_Record.card_id,com_time
+		limit ${number} offset ${startNumber}
+		]]>
+	</select>
+	<resultMap type="HZ_Access_Card_Allocation_Record" id="main_Access_card_logResultMap">
+        <result property="id" column="id" />
+        <result property="name" column="username" />
+        <result property="username" column="password" />
+        <result property="password" column="password" />
+        <result property="description" column="description" />
+    </resultMap>
+</mapper>
+
+

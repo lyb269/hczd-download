@@ -7,6 +7,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -204,8 +205,17 @@ public class HZ_Gas_Card_Consumption_LogController {
 	 * @return
 	 */
 	@RequestMapping(value = "console_info.htm")
-	public String console_info(ModelMap model,String cardNo){
+	public String console_info(ModelMap model,String cardNo,String dateStr){
 		model.put("cardNo", cardNo);
+		try {
+			if(dateStr!=null){
+				dateStr = new String(dateStr.getBytes("iso8859-1"), "utf-8");
+				String[] s = dateStr.split("：");
+				model.put("dateStr", s[1]);
+			}
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
 		return "/card/gas_card_consumption_log/console_info";
 	}
 	/**

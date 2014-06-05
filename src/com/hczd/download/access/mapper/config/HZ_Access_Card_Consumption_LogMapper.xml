@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<!DOCTYPE mapper 
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+<mapper namespace="com.hczd.download.access.mapper.IHZ_Access_Card_Consumption_LogMapper">
+    <insert id="insert" parameterType="HZ_Access_Card_Consumption_Log">
+	    insert into HZ_Access_Card_Consumption_Log(
+			inlet_transit_time, outlet_transit_time, closing_date, transit_section, receivable_money,
+			money_num, return_money_num, bill_no, vehicle_passion, charge_type, charge_all_up, charge_pattern,
+			settlement_rovinces, account_balance, import_time, 
+			card_id, card_no, main_name, main_id, anchor_customer_id, anchor_customer_name,
+ 			vehicle_id, vehicle_no, customer_id, customer_name,
+	    	user_id,user_name,oper_ip,oper_time,params
+	    ) values(
+	    	#{inlet_transit_time},#{outlet_transit_time},#{closing_date},#{transit_section},#{receivable_money},
+			#{money_num},#{return_money_num},#{bill_no},#{vehicle_passion},#{charge_type},#{charge_all_up},#{charge_pattern},
+			#{settlement_rovinces},#{account_balance},#{import_time},
+			#{card_id},#{card_no},#{main_name},#{main_id},#{anchor_customer_id},#{anchor_customer_name},
+ 			#{vehicle_id},#{vehicle_no},#{customer_id},#{customer_name},
+	    	#{user_id},#{user_name},#{oper_ip},#{oper_time},#{params}
+	    )
+	    <selectKey keyProperty="id" resultType="int" order="AFTER">
+	        select last_value as ID from HZ_Access_Card_Consumption_Log_id_seq
+	    </selectKey>
+	</insert>
+	<insert id="insertList" parameterType="java.util.List">
+	    insert into HZ_Access_Card_Consumption_Log(
+			inlet_transit_time, outlet_transit_time, closing_date, transit_section, receivable_money,
+			money_num, return_money_num, bill_no, vehicle_passion, charge_type, charge_all_up, charge_pattern,
+			settlement_rovinces, account_balance, import_time, 
+			card_id, card_no, main_name, main_id, anchor_customer_id, anchor_customer_name,
+ 			vehicle_id, vehicle_no, customer_id, customer_name,
+	    	user_id,user_name,oper_ip,oper_time,params
+	    ) values
+	    	<foreach collection="list" item="itm" index="idx" separator=",">
+	    	    (
+	    	    	#{itm.inlet_transit_time},#{itm.outlet_transit_time},#{itm.closing_date},#{itm.transit_section},#{itm.receivable_money},
+					#{itm.money_num},#{itm.return_money_num},#{itm.bill_no},#{itm.vehicle_passion},#{itm.charge_type},#{itm.charge_all_up},#{itm.charge_pattern},
+					#{itm.settlement_rovinces},#{itm.account_balance},#{itm.import_time},
+					#{itm.card_id},#{itm.card_no},#{itm.main_name},#{itm.main_id},#{itm.anchor_customer_id},#{itm.anchor_customer_name},
+		 			#{itm.vehicle_id},#{itm.vehicle_no},#{itm.customer_id},#{itm.customer_name},
+			    	#{itm.user_id},#{itm.user_name},#{itm.oper_ip},#{itm.oper_time},#{itm.params}
+	    	    )
+	    	</foreach>
+	    <selectKey keyProperty="id" resultType="int" order="AFTER">
+	        select last_value as ID from HZ_Access_Card_Consumption_Log_id_seq
+	    </selectKey>
+	</insert>
+	<update id="update">
+	    update HZ_Access_Card_Consumption_Log 
+		    set 
+			    inlet_transit_time = #{inlet_transit_time},outlet_transit_time = #{outlet_transit_time},
+			    closing_date = #{closing_date},transit_section = #{transit_section},receivable_money = #{receivable_money},
+				money_num = #{money_num},return_money_num = #{return_money_num},bill_no = #{bill_no},
+				vehicle_passion = #{vehicle_passion},charge_type = #{charge_type},charge_all_up = #{charge_all_up},
+				charge_pattern = #{charge_pattern},settlement_rovinces = #{settlement_rovinces},
+				account_balance = #{account_balance},import_time = #{import_time},
+				card_id = #{card_id},card_no = #{card_no},main_name = #{main_name},main_id = #{main_id},anchor_customer_id = #{anchor_customer_id},anchor_customer_name = #{anchor_customer_name},
+	 			vehicle_id = #{vehicle_id},vehicle_no = #{vehicle_no},customer_id = #{customer_id},customer_name = #{customer_name},
+			    user_id = #{user_id}, user_name = #{user_name}, oper_ip = #{oper_ip}, oper_time = #{oper_time}, params = #{params}
+		    where id = #{id}
+	</update>
+	<update id="updateField" parameterType="map">
+	     update HZ_Access_Card_Consumption_Log 
+		    ${set_sql}
+	</update>
+	<select id="getScale" parameterType="map" resultType="Object">
+	    select ${column} from HZ_Access_Card_Consumption_Log 
+	    ${where}
+	    limit 1 offset 0
+	</select>
+	<select id="getScaleList" parameterType="map" resultType="map">
+	    select ${column} from HZ_Access_Card_Consumption_Log 
+	    ${where}
+	</select>
+	<delete id="delete" parameterType="string">
+	    delete from HZ_Access_Card_Consumption_Log where id= #{id}
+	</delete>
+	<delete id="deleteRepeat" parameterType="map">
+	    delete from hz_access_card_consumption_log 
+		where (vehicle_id,card_no,outlet_transit_time,inlet_transit_time,transit_section,money_num)
+		in  
+		(select vehicle_id,card_no,outlet_transit_time,inlet_transit_time,transit_section,money_num
+		from hz_access_card_consumption_log
+		group by vehicle_id,card_no,outlet_transit_time,inlet_transit_time,transit_section,money_num
+		having count(card_no) > 1)
+		and id not in
+		(select min(id) id from hz_access_card_consumption_log
+		where (vehicle_id,card_no,outlet_transit_time,inlet_transit_time,transit_section,money_num)
+		in
+		(select vehicle_id,card_no,outlet_transit_time,inlet_transit_time,transit_section,money_num
+		from hz_access_card_consumption_log
+		group by vehicle_id,card_no,outlet_transit_time,inlet_transit_time,transit_section,money_num
+		having count(card_no) > 1)
+		group by (vehicle_id,card_no,outlet_transit_time,inlet_transit_time,transit_section,money_num),customer_id is not null
+		)
+	</delete>
+	<select id="select" resultType="HZ_Access_Card_Consumption_Log">
+	    select * from HZ_Access_Card_Consumption_Log
+	</select>
+	<select id="selectByParams" resultType="HZ_Access_Card_Consumption_Log" parameterType="map">
+	    select * from HZ_Access_Card_Consumption_Log ${where} 
+	</select>
+	<select id="selectByPage" parameterType="HZ_PageData" resultType="HZ_Access_Card_Consumption_Log">
+	    select * from HZ_Access_Card_Consumption_Log 
+	    limit ${pageSize} offset ${(currentPage - 1) * pageSize}
+	</select>
+	<select id="selectPageByParams" parameterType="map" resultType="HZ_Access_Card_Consumption_Log">
+	    select * from HZ_Access_Card_Consumption_Log ${where} 
+	    limit ${pageData.pageSize} offset ${(pageData.currentPage - 1) * pageData.pageSize}
+	</select>
+	<select id="count" parameterType="map" resultType="int">
+	    select count(id) from HZ_Access_Card_Consumption_Log ${where}
+	</select>
+	<select id="get" parameterType="string" resultType="HZ_Access_Card_Consumption_Log">
+	    select * from HZ_Access_Card_Consumption_Log where id = #{id}
+	</select>
+	<select id="sum" parameterType="map" resultType="double">
+	    select sum(cast(${column} as float)) from HZ_Access_Card_Consumption_Log 
+	    ${where}
+	</select>
+	<!-- end 通行卡账户明细查询 -->
+	<select id="queryDetailInfo" parameterType="map" resultType="map">
+	   select * from (
+	    		select id,customer_id,customer_name,app_time,com_time,null as transit_section,status,app_num,current_balance,card_id,card_no,vehicle_no,source as remark from hz_access_card_allocation_record where status='完成'
+			union all 
+				select id,customer_id,customer_name,inlet_transit_time,outlet_transit_time,transit_section,'完成',money_num,account_balance,card_id,card_no,vehicle_no,import_time from hz_access_card_consumption_log
+		) A ${where} 
+		limit ${pageData.pageSize} offset ${(pageData.currentPage - 1) * pageData.pageSize}
+	</select>
+	<select id="countDetailInfo" parameterType="map" resultType="int">
+	   select count(id) from (select * from (
+	    		select id,customer_id,customer_name,app_time,com_time,null as transit_section,status,app_num,current_balance,card_id,card_no,vehicle_no,source as remark from hz_access_card_allocation_record where status='完成'
+			union all 
+				select id,customer_id,customer_name,inlet_transit_time,outlet_transit_time,transit_section,'完成',money_num,account_balance,card_id,card_no,vehicle_no,import_time from hz_access_card_consumption_log
+		) A ${where} ) Z
+	</select>
+	<!-- end 通行卡账户明细查询 -->
+	<!-- 获取一段时间内的该主卡的所有卡消费记录 -->
+	<select id="getListByMainNo" parameterType="map" resultType="HZ_Access_Card_Consumption_Log">
+	<![CDATA[
+	    select HZ_Access_Card_Consumption_Log.* from HZ_Access_Card_Consumption_Log
+	    left join HZ_Access_Card on HZ_Access_Card.id=HZ_Access_Card_Consumption_Log.card_id
+	    where HZ_Access_Card.main_card_id='${main_id}' and 
+	    to_timestamp(HZ_Access_Card_Consumption_Log.outlet_transit_time,'YYYY-MM-DD HH24:MI:SS') >= to_timestamp(${startDate},'YYYY-MM-DD HH24:MI:SS')
+		and
+		to_timestamp(HZ_Access_Card_Consumption_Log.outlet_transit_time,'YYYY-MM-DD HH24:MI:SS') <= to_timestamp(${endDate},'YYYY-MM-DD HH24:MI:SS')
+		order by HZ_Access_Card_Consumption_Log.card_id,outlet_transit_time
+		limit ${number} offset ${startNumber}
+		]]>
+	</select>
+	<!-- 获取一段时间内的该主卡的所有卡消费记录数量 -->
+	<select id="countListByMainNo" parameterType="map" resultType="int">
+	<![CDATA[
+	    select count(HZ_Access_Card_Consumption_Log.id) from HZ_Access_Card_Consumption_Log
+	    left join HZ_Access_Card on HZ_Access_Card.id=HZ_Access_Card_Consumption_Log.card_id
+	    where HZ_Access_Card.main_card_id='${main_id}' and 
+	    to_timestamp(HZ_Access_Card_Consumption_Log.outlet_transit_time,'YYYY-MM-DD HH24:MI:SS') >= to_timestamp(${startDate},'YYYY-MM-DD HH24:MI:SS')
+		and
+		to_timestamp(HZ_Access_Card_Consumption_Log.outlet_transit_time,'YYYY-MM-DD HH24:MI:SS') <= to_timestamp(${endDate},'YYYY-MM-DD HH24:MI:SS')
+		]]>
+	</select>
+	<resultMap type="HZ_Access_Card_Consumption_Log" id="main_gas_card_logResultMap">
+        <result property="id" column="id" />
+        <result property="name" column="username" />
+        <result property="username" column="password" />
+        <result property="password" column="password" />
+        <result property="description" column="description" />
+    </resultMap>
+</mapper>
+
+

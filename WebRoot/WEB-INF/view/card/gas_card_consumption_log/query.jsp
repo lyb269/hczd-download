@@ -67,7 +67,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 							    href:url,
 							    modal:false
 							}); */
-						window.open('card/gas_card_consumption_log/console_info.htm?cardNo='+obj.card_no,'newwindow'+obj.card_no,'height=500,width=700,top=0,left=0,toolbar=no,menubar=no,scrollbars=no,resizable=no,location=no,status=no');
+						window.open('card/gas_card_consumption_log/console_info.htm?cardNo='+obj.card_no+'&dateStr='+obj.dateStr,'newwindow'+obj.card_no,'height=500,width=700,top=0,left=0,toolbar=no,menubar=no,scrollbars=no,resizable=no,location=no,status=no');
 						}else{
 							$.messager.alert('提示','请选择一项进行操作！');
 						}
