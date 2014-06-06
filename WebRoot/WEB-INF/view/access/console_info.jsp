@@ -7,7 +7,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 	<head>
 	<base href="<%=basePath%>">
     
-    <title>${cardNo}实时控制台:${dateStr}</title>
+    <title>实时控制台</title>
     
 	<meta http-equiv="pragma" content="no-cache">
 	<meta http-equiv="cache-control" content="no-cache">

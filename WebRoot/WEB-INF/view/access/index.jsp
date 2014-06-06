@@ -23,6 +23,8 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
     				alert("开始日期不能为空");
     			}else if(endDate == "" || endDate == null){
     				alert("结束日期不能为空");
+    			}else if(startDate > endDate){
+    				alert("开始日期必须结束日期");
     			}else{
     				$('#btn_download').html("<span class='l-btn-left'><span class='l-btn-text icon-ok l-btn-icon-left'>下载中..</span></span>");
     				$.ajax({
@@ -46,26 +48,6 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
     			
     		}
     		
-    		/* 日期字段判断 */
-    		$('#date_start').datebox({    
-   				onSelect: function(date){
- 					 if(date >= new Date()){
-				 	 	alert("开始日期必须小于今天");
-				 	 	$('#date_start').datebox('setValue', "");	
-				 	 }
-    			}
-			}); 
-			$('#date_end').datebox({    
-   				onSelect: function(date){
-   					var endDate = $('#date_end').datebox('getValue');
-   					var startDate = $('#date_start').datebox('getValue');
- 					 if(endDate < startDate){
-				 	 	alert("结束日期必须大于等于开始日期");
-				 	 	$('#date_end').datebox('setValue', "");	
-				 	 }
-    			}
-			}); 
-			
 			function console(){
 				window.open('access/access_card/console_info.htm','height=500,width=700,top=0,left=0,toolbar=no,menubar=no,scrollbars=no,resizable=no,location=no,status=no');
 			}

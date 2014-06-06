@@ -146,6 +146,7 @@ public class HZ_Access_Card_Consumption_LogUtil implements Runnable {
 		//缓存传上来的消费数据
 		List<HZ_Access_Card_Consumption_Log> list_temp_consumption = new ArrayList<HZ_Access_Card_Consumption_Log>();
 		Integer row = null; //用来标记第几行出现异常
+		HZ_Access_Card access_card = null;
 		try {
 			//第一步：获取消费数据中时间最大值
 			Map<String, Object> params = new HashMap<String, Object>();
@@ -163,7 +164,8 @@ public class HZ_Access_Card_Consumption_LogUtil implements Runnable {
 				//根据时间判断是否数据库中之前已经存在，如果已经存在则继续下一条
 				String d_time = log.getOutlet_transit_time();
 				//进行excel数据解析
-				if(set_unique_var == null || !set_unique_var.contains(log.getCard_no().trim() + log.getOutlet_transit_time().trim())){
+				if(set_unique_var == null ||
+						!set_unique_var.contains(log.getCard_no().trim() + log.getOutlet_transit_time().trim())){
 					String card_no = log.getCard_no();
 					if (StringUtils.isNotBlank(card_no)) {
 						Map<String, Object> cardparams = new HashMap<String, Object>();
@@ -193,7 +195,7 @@ public class HZ_Access_Card_Consumption_LogUtil implements Runnable {
 							params = new HashMap<String, Object>();
 							params.put("card_no", log.getCard_no().trim());
 							//查询通行卡信息
-							HZ_Access_Card access_card = hz_access_cardService.get(params);
+							access_card = hz_access_cardService.get(params);
 							if(access_card ==  null){
 								params = new HashMap<String, Object>();
 								params.put("card_no", card_no);
@@ -223,7 +225,7 @@ public class HZ_Access_Card_Consumption_LogUtil implements Runnable {
 								log.setMain_id(access_card.getMain_card_id());
 								log.setCard_id(access_card.getId());
 							}else{
-								hz_accessUtil.print_err_msg(sb, log.getCard_no().trim()+"在系统中不存在");
+								hz_accessUtil.print_err_msg(sb, log.getCard_no().trim()+"在系统中不存在,不进行导入");
 							}
 						}
 						
@@ -239,7 +241,9 @@ public class HZ_Access_Card_Consumption_LogUtil implements Runnable {
 						}
 						//设置记录时间
 						log.setImport_time(import_time);
-						list_temp_consumption.add(log);
+						if(access_card !=  null){
+							list_temp_consumption.add(log);
+						}
 						if(list_temp_consumption.size()>500){
 							//分批次保存，每五百条保存一次
 							hz_access_card_consumption_logService.saveList(list_temp_consumption);
@@ -247,7 +251,7 @@ public class HZ_Access_Card_Consumption_LogUtil implements Runnable {
 						}
 					}//end 卡号不为空
 				}else{
-					hz_accessUtil.print_err_msg(sb,"在第" + row + "行，该消费数据时间点：" + d_time + "已经处理过了，不进行重复导入");
+					hz_accessUtil.print_err_msg(sb,"在第" + (size-row) + "行，该消费数据时间点：" + d_time + "已经处理过了，不进行重复导入");
 				}
 			}
 			//批量保存
