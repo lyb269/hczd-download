@@ -28,7 +28,14 @@
 	     <servlet-name>springMvc</servlet-name>
 	     <url-pattern>*.htm</url-pattern>
 	 </servlet-mapping>
-	 
+	 <filter>
+	     <filter-name>authority</filter-name>
+	     <filter-class>com.hczd.download.authority.filter.HZ_AuthorityFilter</filter-class>
+	 </filter>
+	 <filter-mapping>
+	     <filter-name>authority</filter-name>
+	     <url-pattern>*.htm</url-pattern>
+	 </filter-mapping>
 	
 	<!-- end Spring3.2 -->
 	
