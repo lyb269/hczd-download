@@ -22,6 +22,7 @@ import org.apache.commons.httpclient.cookie.CookiePolicy;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.params.HttpMethodParams;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.POIXMLDocument;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -39,6 +40,9 @@ import org.jsoup.nodes.Element;
 import org.junit.Test;
 import org.springframework.test.context.ContextConfiguration;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 import com.hczd.download.access.module.HZ_Access_Card_Consumption_Log;
 import com.hczd.download.access.util.HZ_Access_Card_Consumption_LogUtil;
 import com.hczd.download.common.httpclient.HZ_HttpClient;
@@ -764,4 +768,27 @@ public class MTKDemo1 {
 			e.printStackTrace();
 		}
 	}  
+	
+	@Test
+	public void test_login_sub(){
+		HttpClient httpClient = new HttpClient();
+		String url = "http://10.1.1.85:8080/hczd-client/authority/login/switching_login.htm?id=1" ;
+		GetMethod getMethod = new GetMethod(url);
+		try {
+			int login_status = httpClient.executeMethod(getMethod);
+			String str = getMethod.getResponseBodyAsString();
+			if(StringUtils.isNotBlank(str)){
+				GsonBuilder builder = new GsonBuilder();
+				Gson gson = builder.create();
+				Map<String,Object> result_map = gson.fromJson(str, new TypeToken<Map<String,Object>>(){}.getType());
+				System.out.println(result_map.get("login_info"));
+				System.out.println(result_map.get("customer_user"));
+				
+			}else{
+				//没登录
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} 
+	}
 }

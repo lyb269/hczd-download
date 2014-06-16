@@ -38,7 +38,7 @@ public class HZ_AuthorityFilter implements Filter {
 		HttpServletResponse response = (HttpServletResponse) resp;
 		String path = request.getServletPath();
 		Object obj = request.getSession().getAttribute(HZ_LoginConstant.SESSION_LOGIN);
-		if(path.contains("authority/login/toLogin.htm")||path.contains("login.jsp") || path.contains("authority/login/login.htm")  || obj!= null){
+		if(path.contains("authority/login/toLogin.htm")||path.contains("authority/login/login.htm") ||path.contains("login.jsp") ||path.contains("authority/index.jsp") || obj!= null){
 			//拦截用户是否登录
 			chain.doFilter(req, resp);
 		}else{
