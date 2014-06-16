@@ -18,23 +18,6 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
   </head>
   
   <body>
-	<fieldset>
-		<legend>登录</legend>
-		<form action="authority/login/login.htm" method="post">
-			<table>
-				<tr>
-					<td>用户名:</td>
-					<td><input type="text" name="username"/></td>
-				</tr>
-				<tr>
-					<td>密码:</td>
-					<td><input type="password" name="password"/></td>
-				</tr>
-				<tr>
-					<td colspan="2"><input type="submit" value="登录"/></td>
-				</tr>
-			</table>
-		</form>
-	</fieldset>
+	<p>用户名密码错误！</p>
   </body>
 </html>

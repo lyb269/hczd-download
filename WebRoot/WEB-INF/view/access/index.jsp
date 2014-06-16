@@ -24,7 +24,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
     			}else if(endDate == "" || endDate == null){
     				alert("结束日期不能为空");
     			}else if(startDate > endDate){
-    				alert("开始日期必须结束日期");
+    				alert("开始日期必须小于结束日期");
     			}else{
     				$('#btn_download').html("<span class='l-btn-left'><span class='l-btn-text icon-ok l-btn-icon-left'>下载中..</span></span>");
     				$.ajax({

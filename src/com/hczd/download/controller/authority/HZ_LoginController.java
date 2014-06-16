@@ -36,7 +36,11 @@ public class HZ_LoginController {
 	 */
 	@RequestMapping(value="login.htm")
 	public String login(String username,String password,HttpSession session,HttpServletRequest request){
-		session.setAttribute(HZ_LoginConstant.SESSION_LOGIN, "success");
-		return "authority/index";
+		if(username.equals("365365") && password.equals("365365")){
+			session.setAttribute(HZ_LoginConstant.SESSION_LOGIN, "success");
+			return "authority/index";
+		}else{
+			return "authority/error";
+		}
 	}
 }
