@@ -196,6 +196,7 @@ public class HZ_AccessUtil {
 			           if(DOWNLOAD_TYPE_All.equals(type)){
 				           //6、解析xml
 				           List<HZ_Access_Card_Consumption_Log> logs = parseXml(path);
+				           System.out.println(logs.size());
 				           //7、导入到数据库中
 				           print_msg(sb, "准备导入数据..");
 				           hz_access_card_consumption_logUtil.upload_Consumption(logs,sb);

@@ -1,8 +1,10 @@
 package com.hczd.download.card.dao;
 
 import java.util.List;
+import java.util.Map;
 
 import com.hczd.download.base.dao.IHZ_BaseDao;
+import com.hczd.download.base.module.HZ_PageData;
 import com.hczd.download.card.module.HZ_Main_Gas_Card;
 
 /**
@@ -70,4 +72,21 @@ public interface IHZ_Main_Gas_CardDao extends IHZ_BaseDao<HZ_Main_Gas_Card, Inte
 	 * @param start_time 开始时间（不包含计算）
 	 */
 	public void updateBalance(String main_card_balance,String main_card_no,String start_time);
+	/**
+	 * 中石油主卡列表
+	 * @author linyb
+	 * @create_date 2014-7-14下午1:54:19
+	 * @param params
+	 * @param page
+	 * @return
+	 */
+	public List<HZ_Main_Gas_Card> listPetroChinaByPage(Map<String,Object> params , HZ_PageData page);
+	/**
+	 * 中石油主卡数
+	 * @author linyb
+	 * @create_date 2014-7-14下午1:55:08
+	 * @param params
+	 * @return
+	 */
+	public int countPetroChina(Map<String,Object> params);
 }

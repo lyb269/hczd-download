@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.hczd.download.base.dao.impl.HZ_BaseDao;
+import com.hczd.download.base.module.HZ_PageData;
+import com.hczd.download.base.util.HZ_SQL_ParamsUtil;
 import com.hczd.download.card.dao.IHZ_Main_Gas_CardDao;
 import com.hczd.download.card.mapper.IHZ_Main_Gas_CardMapper;
 import com.hczd.download.card.module.HZ_Main_Gas_Card;
@@ -126,5 +128,33 @@ public class HZ_Main_Gas_CardDao extends HZ_BaseDao<HZ_Main_Gas_Card, Integer> i
 		params.put("start_time", start_time);
 		getMapper().updateBalance(params);
 	}
-
+	
+	/**
+	 * 中石油主卡列表
+	 * @author linyb
+	 * @create_date 2014-7-14下午1:54:19
+	 * @param params
+	 * @param page
+	 * @return
+	 */
+	public List<HZ_Main_Gas_Card> listPetroChinaByPage(Map<String,Object> params , HZ_PageData pageData){
+		if(pageData == null)pageData = new HZ_PageData();
+		if(params == null)params = new HashMap<String, Object>();
+	
+		pageData.setTotalSize(countPetroChina(params));
+		//添加分页功能
+		params.put("pageData", pageData);
+		return getMapper().listPetroChinaByPage(params);
+	}
+	/**
+	 * 中石油主卡数
+	 * @author linyb
+	 * @create_date 2014-7-14下午1:55:08
+	 * @param params
+	 * @return
+	 */
+	public int countPetroChina(Map<String,Object> params){
+		if(params == null)params = new HashMap<String, Object>();
+		return getMapper().countPetroChina(params);
+	}
 }

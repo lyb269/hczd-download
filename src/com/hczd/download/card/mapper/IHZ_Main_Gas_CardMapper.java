@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.hczd.download.base.mapper.IHZ_BaseMapper;
+import com.hczd.download.base.module.HZ_PageData;
 import com.hczd.download.card.module.HZ_Main_Gas_Card;
 
 /**
@@ -79,4 +80,22 @@ public interface IHZ_Main_Gas_CardMapper extends IHZ_BaseMapper<HZ_Main_Gas_Card
 	 * @return 增加后的主卡余额
 	 */
 	public String in_account(Map<String, Object> params);
+	
+	/**
+	 * 中石油主卡列表
+	 * @author linyb
+	 * @create_date 2014-7-14下午1:54:19
+	 * @param params
+	 * @param page
+	 * @return
+	 */
+	public List<HZ_Main_Gas_Card> listPetroChinaByPage(Map<String,Object> params );
+	/**
+	 * 中石油主卡数
+	 * @author linyb
+	 * @create_date 2014-7-14下午1:55:08
+	 * @param params
+	 * @return
+	 */
+	public int countPetroChina(Map<String,Object> params);
 }

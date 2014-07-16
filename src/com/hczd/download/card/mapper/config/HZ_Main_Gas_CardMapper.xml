@@ -78,11 +78,26 @@
 		where B.name like '中石化%'
 		order by card_no desc
 	</select>
-	<select id="listPetroChina" resultType="HZ_Main_Gas_Card">
+	<select id="listPetroChina" resultType="HZ_Main_Gas_Card" >
 	    select A.* from HZ_Main_Gas_Card A
 		left outer join HZ_Supplier B on A.supplier_id = B.id
 		where B.name like '中石油%'
 	</select>
+	
+	<select id="listPetroChinaByPage" resultType="HZ_Main_Gas_Card" parameterType="map">
+	    select A.* from HZ_Main_Gas_Card A
+		left outer join HZ_Supplier B on A.supplier_id = B.id
+		where B.name like '中石油%'
+		${where} 
+		 limit ${pageData.pageSize} offset ${(pageData.currentPage - 1) * pageData.pageSize}
+	</select>
+	<select id="countPetroChina" parameterType="map" resultType="int">
+        select count(A.id) from HZ_Main_Gas_Card A
+		left outer join HZ_Supplier B on A.supplier_id = B.id
+		where B.name like '中石油%' 
+		${where} 
+	</select>
+	
 	<select id="selectByParams" resultType="HZ_Main_Gas_Card" parameterType="map">
 	    select * from HZ_Main_Gas_Card ${where} 
 	</select>

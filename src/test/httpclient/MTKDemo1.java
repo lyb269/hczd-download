@@ -44,12 +44,10 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.hczd.download.access.module.HZ_Access_Card_Consumption_Log;
-import com.hczd.download.access.util.HZ_Access_Card_Consumption_LogUtil;
 import com.hczd.download.common.httpclient.HZ_HttpClient;
 
 @ContextConfiguration(locations = "classpath:com/hczd/download/config/spring/app-*.xml")
 public class MTKDemo1 {
-	private Object array;
 
 	@Test
 	public void testLogin(){

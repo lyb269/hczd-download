@@ -145,18 +145,19 @@ public class HZ_Gas_Card_Consumption_LogController {
 		String root = httpServletRequest.getServletContext().getRealPath("/") + "card_data/";
 		File file = new File(root);
 		File[] files = file.listFiles();
-		List<File> fs = new ArrayList<File>();
 		List<HZ_Gas_Card_Cache_Excel> caches = new ArrayList<HZ_Gas_Card_Cache_Excel>();
-		//过滤掉 正在下载的，或者下载失败的，文件夹
-		for (int i = 0; i < files.length; i++) {
-			HZ_Gas_Card_Cache_Excel cache = new HZ_Gas_Card_Cache_Excel();
-			File f = files[i];
-			if(f.isFile()){
-				cache.setF(f);
-				String[] card_no = f.getName().split("\\.");
-				String mainCard = card_no[0];
-				cache.setDate_msg(sinopec_Util.getDateMsg().get(mainCard));
-				caches.add(cache);
+		if(files!=null){
+			//过滤掉 正在下载的，或者下载失败的，文件夹
+			for (int i = 0; i < files.length; i++) {
+				HZ_Gas_Card_Cache_Excel cache = new HZ_Gas_Card_Cache_Excel();
+				File f = files[i];
+				if(f.isFile()){
+					cache.setF(f);
+					String[] card_no = f.getName().split("\\.");
+					String mainCard = card_no[0];
+					cache.setDate_msg(sinopec_Util.getDateMsg().get(mainCard));
+					caches.add(cache);
+				}
 			}
 		}
 		model.put("files", caches);
@@ -207,14 +208,8 @@ public class HZ_Gas_Card_Consumption_LogController {
 	@RequestMapping(value = "console_info.htm")
 	public String console_info(ModelMap model,String cardNo,String dateStr){
 		model.put("cardNo", cardNo);
-		try {
-			if(dateStr!=null){
-				dateStr = new String(dateStr.getBytes("iso8859-1"), "utf-8");
-				String[] s = dateStr.split("：");
-				model.put("dateStr", s[1]);
-			}
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
+		if(dateStr!=null){
+			model.put("dateStr", dateStr);
 		}
 		return "/card/gas_card_consumption_log/console_info";
 	}
@@ -233,4 +228,5 @@ public class HZ_Gas_Card_Consumption_LogController {
 		map.put("show_msg", console_msg.get(cardNo));
 		return  map;
 	}
+	
 }

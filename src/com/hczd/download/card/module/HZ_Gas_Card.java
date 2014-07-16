@@ -264,5 +264,13 @@ public class HZ_Gas_Card extends HZ_BaseRecordObject implements Cloneable {
 	public void setCustomer_balance(String customer_balance) {
 		this.customer_balance = customer_balance;
 	}
+
+	@Override
+	public String toString() {
+		return "HZ_Gas_Card [id=" + id + ", card_no=" + card_no
+				+ ", main_card_no=" + main_card_no + ", main_card_id="
+				+ main_card_id + ", customer_id=" + customer_id
+				+ ", customer_name=" + customer_name + "]";
+	}
 	
 }

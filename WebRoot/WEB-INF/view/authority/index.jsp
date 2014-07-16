@@ -18,7 +18,8 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
   </head>
   
   <body>
-	<a href="card/gas_card_consumption_log/query.htm">加油卡消费数据下载</a>
+	<a href="card/gas_card_consumption_log/query.htm">中石化消费数据下载</a>
+	<a href="card/petro/query.htm">中石油消费数据下载</a>
 	<a href="access/access_card/index.htm">闽通卡消费数据下载</a>
   </body>
 </html>

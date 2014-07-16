@@ -28,6 +28,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.NumberToTextConverter;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -462,68 +463,80 @@ public class HZ_Sinopec_Util{
 		}
 	}
 	
+	public void testMergerExcelFile() {
+		StringBuffer sb = new StringBuffer();
+		String mainCard = "1000113500002045125";
+		List<Object> list_cardNo = hz_gas_cardService.getConsumptionCardNoByMainCard(mainCard,  "2014-07-02 00:00:00",  "2014-07-02 23:59:59");
+		mergerExcelFile(mainCard, list_cardNo, "E:\\apache-tomcat-7.0.52\\webapps\\hczd-download\\card_data\\"+mainCard, sb);
+	}
+	
 	/**
 	 * @author xiaojin
 	 * @throws IOException 
 	 * @create_date 2014-4-29下午4:04:13
 	 */
-	private void mergerExcelFile(String mainCard ,List<Object> list_cardNo,String path,StringBuffer sb) throws IOException {
-		File mainFile = new File(path+".xls");
-		mainFile.createNewFile();
-		//FileInputStream fis=new FileInputStream(mainFile);
-		Workbook mainWB = new HSSFWorkbook();
-		Sheet mainsheet = mainWB.createSheet();
-		Row rowHead = mainsheet.createRow(0);
-		rowHead.createCell(0).setCellValue("加油卡号");
-		rowHead.createCell(1).setCellValue("交易号");
-		rowHead.createCell(2).setCellValue("日期");
-		rowHead.createCell(3).setCellValue("地点");
-		rowHead.createCell(4).setCellValue("数量(升)");
-		rowHead.createCell(5).setCellValue("型号");
-		rowHead.createCell(6).setCellValue("总价");
-		rowHead.createCell(7).setCellValue("积分");
-		rowHead.createCell(8).setCellValue("交易类型");
+	private void mergerExcelFile(String mainCard ,List<Object> list_cardNo,String path,StringBuffer sb) {
 		
-		int mianRowIndex = 1;
-		
-		Workbook wb=null;
-		
-		for (int i = 0; i < list_cardNo.size(); i++) {
-			File file =new File(path + "/"+ list_cardNo.get(i).toString() +".xls");
+		try {
+			File mainFile = new File(path+".xls");
+			mainFile.createNewFile();
+			//FileInputStream fis=new FileInputStream(mainFile);
+			Workbook mainWB = new HSSFWorkbook();
+			Sheet mainsheet = mainWB.createSheet();
+			Row rowHead = mainsheet.createRow(0);
+			rowHead.createCell(0).setCellValue("加油卡号");
+			rowHead.createCell(1).setCellValue("交易号");
+			rowHead.createCell(2).setCellValue("日期");
+			rowHead.createCell(3).setCellValue("地点");
+			rowHead.createCell(4).setCellValue("数量(升)");
+			rowHead.createCell(5).setCellValue("型号");
+			rowHead.createCell(6).setCellValue("总价");
+			rowHead.createCell(7).setCellValue("积分");
+			rowHead.createCell(8).setCellValue("交易类型");
 			
-			if(file.length()>0){
-				FileInputStream inputStream=new FileInputStream(file);
-				try{
-					wb = new HSSFWorkbook(inputStream);
-				}catch (Exception e) {
-					wb = new XSSFWorkbook(inputStream);
-				}
-				Sheet sheet = wb.getSheetAt(0);
-		        
-				int rowNum = sheet.getPhysicalNumberOfRows();
+			int mianRowIndex = 1;
+			
+			Workbook wb=null;
+			
+			for (int i = 0; i < list_cardNo.size(); i++) {
+				File file =new File(path + "/"+ list_cardNo.get(i).toString() +".xls");
 				
-				for (int j = 1; j < rowNum; j++,mianRowIndex++) {
-					Row mainRow = mainsheet.createRow(mianRowIndex);
+				if(file.length()>0){
+					FileInputStream inputStream=new FileInputStream(file);
+					try{
+						wb = new HSSFWorkbook(inputStream);
+					}catch (Exception e) {
+						wb = new XSSFWorkbook(inputStream);
+					}
+					Sheet sheet = wb.getSheetAt(0);
+			        
+					int rowNum = sheet.getPhysicalNumberOfRows();
 					
-					Row row = sheet.getRow(j);
-					int cellNum = row.getPhysicalNumberOfCells();
-					for (int k = 0; k < cellNum; k++) {
-						Cell cell = row.getCell(k);
-						Cell mainCell = mainRow.createCell(k);
-						mainCell.setCellValue(getCellValue(cell));
+					for (int j = 1; j < rowNum; j++,mianRowIndex++) {
+						Row mainRow = mainsheet.createRow(mianRowIndex);
+						
+						Row row = sheet.getRow(j);
+						int cellNum = row.getPhysicalNumberOfCells();
+						for (int k = 0; k < cellNum; k++) {
+							Cell cell = row.getCell(k);
+							Cell mainCell = mainRow.createCell(k);
+							mainCell.setCellValue(getCellValue(cell));
+						}
 					}
 				}
 			}
+			
+			FileOutputStream fileoutputstream = new FileOutputStream(mainFile);
+			mainWB.write(fileoutputstream);
+			fileoutputstream.close();
+			
+			//删除临时文件
+			File file =new File(path + "/");
+			FileUtils.deleteDirectory(file);
+			put_msg(mainCard,"删除临时文件",sb);
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
-		
-		FileOutputStream fileoutputstream = new FileOutputStream(mainFile);
-		mainWB.write(fileoutputstream);
-		fileoutputstream.close();
-		
-		//删除临时文件
-		File file =new File(path + "/");
-		FileUtils.deleteDirectory(file);
-		put_msg(mainCard,"删除临时文件",sb);
 	}
 	
 	

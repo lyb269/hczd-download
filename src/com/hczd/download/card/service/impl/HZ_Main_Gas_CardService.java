@@ -7,6 +7,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.hczd.download.base.module.HZ_PageData;
 import com.hczd.download.base.service.impl.HZ_BaseService;
 import com.hczd.download.card.dao.IHZ_Main_Gas_CardDao;
 import com.hczd.download.card.dao.impl.HZ_Main_Gas_CardDao;
@@ -131,6 +132,18 @@ public class HZ_Main_Gas_CardService extends HZ_BaseService<HZ_Main_Gas_Card, In
 	public void updateBalance(String main_card_balance, String main_card_no,
 			String start_time) {
 		hz_main_gas_cardDao.updateBalance(main_card_balance, main_card_no, start_time);
+	}
+
+	/**
+	 * 中石油主卡列表
+	 * @author linyb
+	 * @create_date 2014-7-14下午1:54:19
+	 * @param params
+	 * @param page
+	 * @return
+	 */
+	public List<HZ_Main_Gas_Card> listPetroChinaByPage(Map<String,Object> params , HZ_PageData pageData){
+		return hz_main_gas_cardDao.listPetroChinaByPage(params, pageData);
 	}
 
 }
