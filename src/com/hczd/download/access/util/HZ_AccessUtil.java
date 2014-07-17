@@ -26,10 +26,6 @@ import org.springframework.stereotype.Component;
 import com.hczd.download.access.module.HZ_Access_Card_Consumption_Log;
 @Component
 public class HZ_AccessUtil {
-	/**闽通卡账号*/
-	public static final String USERNAME = "200300320130918131610";
-	/**闽通卡密码*/
-	public static final String PASSWORD = "365365";
 	/**闽通卡登录类型，Id登录*/
 	public static final String TYPE_LOGIN = "0";
 	/**闽通卡下载方式：单张*/
@@ -37,7 +33,6 @@ public class HZ_AccessUtil {
 	/**闽通卡下载方式：全部*/
 	public static final String DOWNLOAD_TYPE_All = "71";
 	/**闽通卡域名*/
-	
 	public static final String HOST_URL = "http://www.fjetc.com";
 	/**下载保存路径*/
 	public static final String DOWNLOAD_SAVE_URL = "D:/etc_download/";
@@ -57,8 +52,21 @@ public class HZ_AccessUtil {
 	 * @create_date 2014-5-28下午5:05:49
 	 * @return   登录成功cookie信息
 	 */
-	public Cookie[] login(){
+	public Cookie[] login(String name){
 		sb = new StringBuilder("");  //登录前 情况实时信息
+		
+		String username = "";
+		String password = "";
+		if("福建泉州－主帐户".equals(name.trim())){
+			username = "510100320140528104907";
+			password = "888888";
+		}else if("福建厦门-主账户".equals(name.trim())){
+			username = "200300320130918131610";
+			password = "365365";
+		}else{
+			print_err_msg(sb, "登录失败，请验证账户是否存在！");
+			return null;
+		}
 		PostMethod postMethod = null;
 		GetMethod getMethod  = null;
 		Cookie[] cs = null;
@@ -77,8 +85,8 @@ public class HZ_AccessUtil {
 			//参数数组
 			NameValuePair[] data = {
 										new NameValuePair("ctl00$MainContent$logintype", TYPE_LOGIN),
-										new NameValuePair("ctl00$MainContent$txtNumber", USERNAME),
-										new NameValuePair("ctl00$MainContent$txtpassWord", PASSWORD),
+										new NameValuePair("ctl00$MainContent$txtNumber", username),
+										new NameValuePair("ctl00$MainContent$txtpassWord", password),
 										new NameValuePair("ctl00$MainContent$u_yzm", yzm),
 										new NameValuePair("__EVENTTARGET", ""),
 										new NameValuePair("__EVENTARGUMENT", ""),
@@ -196,7 +204,6 @@ public class HZ_AccessUtil {
 			           if(DOWNLOAD_TYPE_All.equals(type)){
 				           //6、解析xml
 				           List<HZ_Access_Card_Consumption_Log> logs = parseXml(path);
-				           System.out.println(logs.size());
 				           //7、导入到数据库中
 				           print_msg(sb, "准备导入数据..");
 				           hz_access_card_consumption_logUtil.upload_Consumption(logs,sb);

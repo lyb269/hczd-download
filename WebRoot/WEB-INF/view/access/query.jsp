@@ -32,21 +32,15 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 			    pageSize:15,
 			    pageList:[10,15,20,25,30,50],
 			    toolbar: [{
-			    	text:'单张下载',
+			    	text:'下载',
 					iconCls: 'icon-ok',
 					handler: function(){
-						if($('#dg').datagrid('getSelected')){
-							var obj = $('#dg').datagrid('getSelected');
-							hczd_sys.window.edit('选择下载条件','access/access_card/toDownload.htm?id='+obj.id,500,150);
+						var obj = $('#dg').datagrid('getSelected');
+						if(obj){
+							hczd_sys.window.edit('选择下载条件','access/access_card/toDownload.htm?name='+obj.name,500,150);
 						}else{
 							$.messager.alert('提示','请选择一项进行操作！');
 						}
-					}
-				},'-',{
-			    	text:'全部下载',
-					iconCls: 'icon-ok',
-					handler: function(){
-							hczd_sys.window.edit('选择下载条件','access/access_card/toDownload.htm',500,150);
 					}
 				},'-',{
 			    	text:'实时控制台',
@@ -76,12 +70,8 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 				selectOnCheck:true,
 			    columns:[[  
 			        {field:'id',title:'编号',width:50,checkbox:true},  
-			        {field:'card_no',title:'卡号',width:160},
-			        {field:'vehicle_no',title:'车牌号',width:150},
-			        {field:'registerdate',title:'注册日期',width:150},
-			        {field:'balance',title:'余额',width:150},
-			        {field:'customer_name',title:'客户',width:150},
-			        {field:'haspwd',title:'是否包含密码',width:150}
+			        {field:'name',title:'所属区域',width:160},
+			        {field:'status',title:'状态',width:160}
 			    ]]  
 			});
 			
@@ -93,13 +83,11 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 			//设置分页时查询条件
 			$('#dg').datagrid({
 				queryParams: {
-					card_no:$('#card_no').val(),
-					vehicle_no:$('#vehicle_no').val()
+					name:$('#name').val(),
 				}
 			});
 			$('#dg').datagrid('load',{
-				card_no:$('#card_no').val(),
-				vehicle_no:$('#vehicle_no').val()
+				name:$('#name').val(),
 			});
 		}
 	</script>
@@ -108,8 +96,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
   <body>
   	<div id="cc" class="easyui-layout" style="width:100%;height:100%; padding: 0;margin: 0;" fit="true">  
 	  	 <div data-options="region:'north',title:'搜索',split:true,collapsible:false" style="height:80px;padding: 10px;">
-	  	 	卡号：<input type="text" value="" name="keyword" id="card_no" />
-	  	 	车牌号：<input type="text" value="" name="keyword" id="vehicle_no" />
+	  	 	所属区域：<input type="text" value="" name="keyword" id="name" />
 	  	 	<a id="btn" href="javascript:void(0);" onclick="search_data()" class="easyui-linkbutton" data-options="iconCls:'icon-search'">搜索</a>
 	  	 </div>
 	  	 <div data-options="region:'center'">

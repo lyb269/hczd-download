@@ -8,7 +8,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
     		function startDownload(){
     			var startDate = $('#date_start').datebox('getValue');
     			var endDate = $('#date_end').datebox('getValue');
-    			var cardNo = $('#mainCard').val();
+    			var name = $('#name_area').val();
     			if(startDate == "" || startDate == null){
     				alert("开始日期不能为空");
     			}else if(endDate == "" || endDate == null){
@@ -17,7 +17,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
     				$.ajax({
 	    			  type:'POST',
 					  url: '<%=basePath%>access/access_card/startDownload.htm',
-					  data:'startDate='+startDate+'&endDate='+endDate+'&cardNo='+cardNo,
+					  data:'startDate='+startDate+'&endDate='+endDate+'&name='+name,
 					  success: function(data){
 						if(data =="200"){
 							alert("下载成功！");
@@ -55,22 +55,13 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 			}); 
    		  </script>
    <table>
-   		<c:if test="${!empty hz_access_card}">
-	  		<tr>
-	  			<input type="hidden" id="mainCard" value="${hz_access_card.card_no}" />
-	  			<td>卡号：</td>
-	  			<td>
-	  				${hz_access_card.card_no}
-	  			</td>
-	  			<td>车牌号：</td>
-	  			<td>
-	  				${hz_access_card.vehicle_no}
-	  			</td>
-	  		</tr>
-  		</c:if>
-  		<c:if test="${empty hz_access_card}">
-  			<input type="hidden" id="mainCard" value="" />
-  		</c:if>
+   		<tr>
+   			<td>所属区域：</td>
+  			<td>
+  				<input id="name_area" value="${name}" type="hidden" />
+  				${name}
+  			 </td>
+   		</tr>
   		<tr>
   			<td>开始日期：</td>
   			<td><input id="date_start" name="date_start" type="text" class="easyui-datebox" required="required"></input> </td>

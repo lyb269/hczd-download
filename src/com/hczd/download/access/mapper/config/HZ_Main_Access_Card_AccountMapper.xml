@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<!DOCTYPE mapper 
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+<mapper namespace="com.hczd.download.access.mapper.IHZ_Main_Access_Card_AccountMapper">
+    <insert id="insert" parameterType="HZ_Main_Access_Card_Account">
+	    insert into HZ_Main_Access_Card_Account(
+	    	name,area,balance,deadline,password,supplier_id,supplier_name,status,
+	    	registerdate,create_time,remark,user_id,user_name,oper_ip,oper_time,params
+	    ) values(
+	    	#{name},#{area},#{balance},#{deadline},#{password},#{supplier_id},
+	    	#{supplier_name},#{status},#{registerdate},#{create_time},#{remark},
+	    	#{user_id},#{user_name},#{oper_ip},#{oper_time},#{params}
+	    )
+	    <selectKey keyProperty="id" resultType="int" order="AFTER">
+	        select last_value as ID from hz_main_access_card_account_id_seq
+	    </selectKey>
+	</insert>
+	<update id="update" parameterType="HZ_Main_Access_Card_Account">
+	    update HZ_Main_Access_Card_Account set 
+	    	name = #{name},area = #{area}, balance = #{balance}, deadline = #{deadline}, password = #{password},
+		    supplier_id = #{supplier_id}, supplier_name = #{supplier_name}, status = #{status},
+		    registerdate = #{registerdate}, create_time = #{create_time}, remark = #{remark},
+		    user_id = #{user_id}, user_name = #{user_name}, oper_ip = #{oper_ip}, oper_time = #{oper_time}, params = #{params}
+	    where id = #{id}
+	</update>
+	<update id="updateField" parameterType="map">
+	    update HZ_Main_Access_Card_Account
+	    ${set_sql}
+	</update>
+	<delete id="delete" parameterType="string">
+	    delete from HZ_Main_Access_Card_Account where id= #{id}
+	</delete>
+	<select id="select" resultType="HZ_Main_Access_Card_Account">
+	    select * from HZ_Main_Access_Card_Account
+	</select>
+	<select id="selectByParams" resultType="HZ_Main_Access_Card_Account" parameterType="map">
+	    select * from HZ_Main_Access_Card_Account ${where} 
+	</select>
+	<select id="selectByPage" parameterType="HZ_PageData" resultType="HZ_Main_Access_Card_Account">
+	    select * from HZ_Main_Access_Card_Account 
+	    limit ${pageSize} offset ${(currentPage - 1) * pageSize}
+	</select>
+	<select id="selectPageByParams" parameterType="map" resultType="HZ_Main_Access_Card_Account">
+	    select * from HZ_Main_Access_Card_Account ${where} 
+	    limit ${pageData.pageSize} offset ${(pageData.currentPage - 1) * pageData.pageSize}
+	</select>
+	<select id="count" parameterType="map" resultType="int">
+	    select count(id) from HZ_Main_Access_Card_Account ${where}
+	</select>
+	<select id="get" parameterType="string" resultType="HZ_Main_Access_Card_Account">
+	    select * from HZ_Main_Access_Card_Account where id = #{id}
+	</select>
+	<select id="getScale" parameterType="map" resultType="Object">
+	    select ${column} from HZ_Main_Access_Card_Account ${where}
+	</select>
+	
+	<resultMap type="HZ_Main_Access_Card_Account" id="main_gas_cardResultMap">
+        <result property="id" column="id" />
+        <result property="name" column="username" />
+        <result property="username" column="password" />
+        <result property="password" column="password" />
+        <result property="description" column="description" />
+    </resultMap>
+</mapper>
+
+

@@ -15,7 +15,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.hczd.download.access.module.HZ_Access_Card;
+import com.hczd.download.access.module.HZ_Main_Access_Card_Account;
 import com.hczd.download.access.service.IHZ_Access_CardService;
+import com.hczd.download.access.service.IHZ_Main_Access_Card_AccountService;
 import com.hczd.download.access.util.HZ_AccessUtil;
 import com.hczd.download.base.module.HZ_PageData;
 /**
@@ -29,6 +31,8 @@ import com.hczd.download.base.module.HZ_PageData;
 public class HZ_Access_CardController {
 	@Autowired
 	private IHZ_Access_CardService hz_access_cardService;
+	@Autowired
+	private IHZ_Main_Access_Card_AccountService hz_main_access_cardService;
 	@Autowired
 	private HZ_AccessUtil hz_accessUtil;
 	/**
@@ -53,15 +57,13 @@ public class HZ_Access_CardController {
 	 * @return
 	 */
 	@RequestMapping(value = "ajax_list.htm",produces = "application/json")
-	public @ResponseBody Map ajax_list(ModelMap model,HZ_PageData pageData,String card_no ,String vehicle_no){
+	public @ResponseBody Map<String,Object> ajax_list(ModelMap model,HZ_PageData pageData,String name){
 		Map<String,Object> params = new HashMap<String, Object>();
-		params.put("card_no_like", card_no);
-		params.put("vehicle_no_like", vehicle_no);
+		params.put("name_like", name);
 		
-		List<HZ_Access_Card> cards = hz_access_cardService.listPageByParams(params, pageData);
-		
+		List<HZ_Main_Access_Card_Account> main_cards = hz_main_access_cardService.listPageByParams(params, pageData);
 		Map<String,Object> msg = new HashMap<String, Object>();
-		msg.put("rows", cards);
+		msg.put("rows", main_cards);
 		msg.put("total", pageData.getTotalSize());
 		return msg;
 	}
@@ -74,10 +76,8 @@ public class HZ_Access_CardController {
 	 * @return 下载选择页面
 	 */
 	@RequestMapping(value="toDownload.htm")
-	public String toDownload(ModelMap model,Integer id){
-		if(id!=null){
-			model.addAttribute("hz_access_card", hz_access_cardService.get(id));
-		}
+	public String toDownload(ModelMap model,String name){
+		model.addAttribute("name", name);
 		return "/access/download";
 	}
 	/**
@@ -90,23 +90,18 @@ public class HZ_Access_CardController {
 	 * @return
 	 */
 	@RequestMapping(value = "startDownload.htm" ,produces = "application/json")
-	public @ResponseBody String ajax_startDownload(HttpServletRequest httpServletRequest,ModelMap model,String startDate,String endDate,String cardNo){
+	public @ResponseBody String ajax_startDownload(HttpServletRequest httpServletRequest,ModelMap model,String startDate,String endDate,String name){
 		String base_path =httpServletRequest.getServletContext().getRealPath("/");
 		String msg = null;
 		StringBuilder sb = hz_accessUtil.getConsole_info();
 		try {
 			//登录闽通卡
-			Cookie[] cs =  hz_accessUtil.login();
+			Cookie[] cs =  hz_accessUtil.login(name);
 			if(cs!= null){
 				hz_accessUtil.print_msg(sb, "登录成功..");
 				//登录成功,判断下载单张，还是全部
-				if(StringUtils.isNotBlank(cardNo)){
-					hz_accessUtil.print_msg(sb, "准备开始单张下载..");
-					msg = hz_accessUtil.download(base_path,startDate, endDate, cardNo,cs,HZ_AccessUtil.DOWNLOAD_TYPE_SINGLE);
-				}else{
-					hz_accessUtil.print_msg(sb, "准备开始下载..");
-					msg = hz_accessUtil.download(base_path ,startDate, endDate, null, cs,HZ_AccessUtil.DOWNLOAD_TYPE_All);
-				}
+				hz_accessUtil.print_msg(sb, "准备开始下载..");
+				msg = hz_accessUtil.download(base_path ,startDate, endDate, null, cs,HZ_AccessUtil.DOWNLOAD_TYPE_All);
 			}else{
 				hz_accessUtil.print_err_msg(sb, "登录失败！");
 				msg = "login_error";
