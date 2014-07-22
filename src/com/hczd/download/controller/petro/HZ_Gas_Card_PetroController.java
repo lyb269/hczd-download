@@ -69,7 +69,7 @@ public class HZ_Gas_Card_PetroController {
 		for (int i = main_cards.size()-1; i >=0; i--) {
 			HZ_Main_Gas_Card main_card = main_cards.get(i);
 			main_card.setState(petroUtil.getMainCardState(main_card.getCard_no()));
-			main_card.setDateStr(petroUtil.getDownLoadDate(main_card.getCard_no()));
+			main_card.setDateStr(petroUtil.getDownLoadDate2(main_card.getCard_no()));
 		}
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("rows", main_cards);

@@ -80,7 +80,8 @@ public class HZ_PetroUtil {
 	private Map<String,StringBuffer> console_msg = new HashMap<String, StringBuffer>();
 	/**下载时间*/
 	private Map<String,String> date_msg = new HashMap<String, String>();
-	
+	/**下载时间信息*/
+	private Map<String,String> date_msg2 = new HashMap<String, String>();
 	/**
 	 * 下载中石油消费数据
 	 * @author linyb
@@ -101,6 +102,7 @@ public class HZ_PetroUtil {
 			String current_mill = "_"+System.currentTimeMillis();
 			mainCardState.put(main_card, HZ_Sinopec_Util.RUNNING);
 			date_msg.put(main_card+current_mill, "当前正在下载："+month+"的"+(StringUtils.isBlank(card_no)?"":card_no)+"的数据");
+			date_msg2.put(main_card, "当前正在下载："+month+"的"+(StringUtils.isBlank(card_no)?"":card_no)+"的数据");
 			put_msg(main_card, "登录中石油系统中..", sb);
 			Map<String,Object> map = login(main_card, code, month, card_no);  
 			if("login_error".equals(map.get("msg"))){
@@ -108,6 +110,7 @@ public class HZ_PetroUtil {
 				mainCardState.put(main_card, HZ_Sinopec_Util.FAIL);
 				put_err(main_card, "登录中石油系统失败..", sb);
 				date_msg.put(main_card+current_mill, "上一次下载："+month+"的"+(StringUtils.isBlank(card_no)?"":card_no)+"的数据失败");
+				date_msg2.put(main_card, "上一次下载："+month+"的"+(StringUtils.isBlank(card_no)?"":card_no)+"的数据失败");
 				return download_msg;
 			}else{
 				Cookie[] cs = (Cookie[]) map.get("cookie");
@@ -121,6 +124,7 @@ public class HZ_PetroUtil {
 					download_msg.put("d_msg", "download_error");
 					mainCardState.put(main_card, HZ_Sinopec_Util.FAIL);
 					date_msg.put(main_card+current_mill, "上一次下载："+month+"的"+(StringUtils.isBlank(card_no)?"":card_no)+"的数据失败");
+					date_msg2.put(main_card, "上一次下载："+month+"的"+(StringUtils.isBlank(card_no)?"":card_no)+"的数据失败");
 					return download_msg;
 				}else{
 					/*
@@ -133,9 +137,11 @@ public class HZ_PetroUtil {
 						put_msg(main_card, "数据上传完成..", sb);
 						put_msg(main_card, "操作完成！", sb);
 						date_msg.put(main_card+current_mill, "上一次下载："+month+"的"+(StringUtils.isBlank(card_no)?"":card_no)+"的数据");
+						date_msg2.put(main_card, "上一次下载："+month+"的"+(StringUtils.isBlank(card_no)?"":card_no)+"的数据");
 					} catch (Exception e) {
 						mainCardState.put(main_card, HZ_Sinopec_Util.FAIL);
 						date_msg.put(main_card+current_mill, "上一次下载："+month+"的"+(StringUtils.isBlank(card_no)?"":card_no)+"的数据失败");
+						date_msg2.put(main_card, "上一次下载："+month+"的"+(StringUtils.isBlank(card_no)?"":card_no)+"的数据失败");
 						put_err(main_card, "上传数据出错..", sb);
 						e.printStackTrace();
 					}
@@ -594,6 +600,16 @@ public class HZ_PetroUtil {
 	 */
 	public String getDownLoadDate(String mainCard){
 		String msg =  date_msg.get(mainCard);
+		if(msg==null){
+			msg ="当前无下载信息";
+		}
+		return msg;
+	}
+	/**
+	 * @author linyb
+	 */
+	public String getDownLoadDate2(String mainCard){
+		String msg =  date_msg2.get(mainCard);
 		if(msg==null){
 			msg ="当前无下载信息";
 		}

@@ -368,8 +368,20 @@ public class MTKDemo1 {
 			String yzm = e.attr("value"); //验证码的值
 			String __VIEWSTATE = e1.attr("value");
 			String __EVENTVALIDATION = e2.attr("value");
-			String username  = "200300320130918131610"; //账户
-			String password = "365365";  //密码
+			
+			/**
+			 * 厦门主卡账号密码
+			 */
+			/*String username  = "200300320130918131610"; 
+			String password = "365365";  */
+			
+			/**
+			 * 泉州主卡账号密码
+			 */
+			String username  = "510100320140528104907"; 
+			String password = "888888";  
+			
+			
 			String type = "0";  //登录类型
 			/*	ctl00$MainContent$logintype:0
 			ctl00$MainContent$txtNumber:200300320130918131610

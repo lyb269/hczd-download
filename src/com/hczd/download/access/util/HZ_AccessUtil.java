@@ -174,9 +174,10 @@ public class HZ_AccessUtil {
 										};
 					
 				   postMethod.setRequestBody(d2); // 参数set
+				   print_msg(sb, "下载中..");
 				   int d_s = client.executeMethod(postMethod);
 				   if(d_s == HttpStatus.SC_OK){
-					   print_msg(sb, "下载中..");
+					   print_msg(sb, "开始输出数据..");
 					   //5、 IO 输出下载的数据
 					   InputStream in = postMethod.getResponseBodyAsStream(); 
 					   File f = new File(base_path+PATH);
@@ -199,7 +200,7 @@ public class HZ_AccessUtil {
 			           }  
 			           in.close();  
 			           out.close();  
-			           print_msg(sb, "下载成功..");
+			           print_msg(sb, "下载输出成功..");
 			           //下载全部的话 数据导入数据库中
 			           if(DOWNLOAD_TYPE_All.equals(type)){
 				           //6、解析xml
