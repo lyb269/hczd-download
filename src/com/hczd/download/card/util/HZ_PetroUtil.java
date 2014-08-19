@@ -199,13 +199,10 @@ public class HZ_PetroUtil {
 					get= new GetMethod("http://www.95504.net"+location);
 					
 					int statusCode_302 = client.executeMethod(get);
-					//System.out.println(get.getResponseBodyAsString());
 					if(statusCode_302 ==HttpStatus.SC_OK  /*200*/){
 						cs = client.getState().getCookies(); // 获取cookie
 						login_m.put("cookie", cs);
 						login_m.put("msg", "login_success");
-						//下载操作
-						//download(cs, month, card_no);
 					}
 				}
 			}
@@ -287,6 +284,7 @@ public class HZ_PetroUtil {
 			if(!f.exists()){
 				f.mkdir();
 			}
+			
 			String download_path = "/User/Consumer_Sale_Operate_Report.aspx?Data_DanWei="+month+"-01&OWNER_ID=&Card_No="+card_no+"&currPage=1&date="+Math.random()+"&date1="+Math.random();
 			put_msg(main_card, "下载中..", sb);
 			get =new GetMethod(download_path);  

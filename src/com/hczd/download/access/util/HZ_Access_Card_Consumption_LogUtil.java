@@ -194,6 +194,7 @@ public class HZ_Access_Card_Consumption_LogUtil implements Runnable {
 						}else{
 							params = new HashMap<String, Object>();
 							params.put("card_no", log.getCard_no().trim());
+							params.put("status_in", "2,-2,-1,-3,-4,-6,0");
 							//查询通行卡信息
 							access_card = hz_access_cardService.get(params);
 							if(access_card ==  null){
@@ -241,9 +242,9 @@ public class HZ_Access_Card_Consumption_LogUtil implements Runnable {
 						}
 						//设置记录时间
 						log.setImport_time(import_time);
-						if(access_card !=  null){
+						//if(access_card !=  null){
 							list_temp_consumption.add(log);
-						}
+						//}
 						if(list_temp_consumption.size()>500){
 							//分批次保存，每五百条保存一次
 							hz_access_card_consumption_logService.saveList(list_temp_consumption);

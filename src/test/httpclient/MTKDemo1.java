@@ -1,6 +1,7 @@
 package test.httpclient;
-
+import static org.junit.Assert.*;
 import java.io.File;
+
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -38,22 +39,32 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import com.hczd.download.access.module.HZ_Access_Card;
 import com.hczd.download.access.module.HZ_Access_Card_Consumption_Log;
+import com.hczd.download.access.service.IHZ_Access_CardService;
 import com.hczd.download.common.httpclient.HZ_HttpClient;
 
 @ContextConfiguration(locations = "classpath:com/hczd/download/config/spring/app-*.xml")
 public class MTKDemo1 {
-
+	@Autowired
+	private IHZ_Access_CardService hz_access_cardService;
 	@Test
 	public void testLogin(){
 		try {
-			Document doc = Jsoup.connect("http://www.fjetc.com/SelfService.aspx").get();
-			Element e = doc.getElementById("H_yzm");
+			//Document doc = Jsoup.connect("http://www.fjetc.com/SelfService.aspx").get();
+			Document doc = Jsoup.connect("http://www.bitauto.com/youjia/xiamen/?WT.srch=1").get();
+			//Element e = doc.getElementById("H_yzm");
+			Element e = doc.getElementById("sug_submit");
 			String yzm = e.attr("value"); //验证码的值
 			String username  = "200300320130918131610"; //账户
 			String password = "365365";  //密码
@@ -66,7 +77,7 @@ public class MTKDemo1 {
 			ctl00$MainContent$u_yzm:7678
 			H_yzm:7678*/
 			
-			HZ_HttpClient client = new HZ_HttpClient("http://www.fjetc.com/");
+			/*HZ_HttpClient client = new HZ_HttpClient("http://www.fjetc.com/");
 			Map<String,String> params = new HashMap<String, String>();
 			params.put("ctl00$MainContent$logintype", type);
 			params.put("ctl00$MainContent$txtNumber", username);
@@ -74,7 +85,7 @@ public class MTKDemo1 {
 			params.put("ctl00$MainContent$u_yzm", yzm);
 			
 			byte[] byteLoginResult = client.requestPostMethod("/SelfServiceOperate.aspx", params, null);
-			System.out.println(new String(byteLoginResult, "utf-8"));
+			System.out.println(new String(byteLoginResult, "utf-8"));*/
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -372,14 +383,14 @@ public class MTKDemo1 {
 			/**
 			 * 厦门主卡账号密码
 			 */
-			/*String username  = "200300320130918131610"; 
-			String password = "365365";  */
+			String username  = "200300320130918131610"; 
+			String password = "365365";  
 			
 			/**
 			 * 泉州主卡账号密码
 			 */
-			String username  = "510100320140528104907"; 
-			String password = "888888";  
+			/*String username  = "510100320140528104907"; 
+			String password = "888888";  */
 			
 			
 			String type = "0";  //登录类型
@@ -793,7 +804,6 @@ public class MTKDemo1 {
 				Map<String,Object> result_map = gson.fromJson(str, new TypeToken<Map<String,Object>>(){}.getType());
 				System.out.println(result_map.get("login_info"));
 				System.out.println(result_map.get("customer_user"));
-				
 			}else{
 				//没登录
 			}
